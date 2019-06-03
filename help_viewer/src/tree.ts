@@ -10,6 +10,7 @@ function updateSearch() {
     if (searchTimeout) {
         clearTimeout(searchTimeout);
     }
+
     searchTimeout = setTimeout(() => {
         const searchText = $("#tree-search-input").val().toString();
         $("#jstree").jstree(true).search(searchText);
@@ -33,9 +34,15 @@ function loadTree(nodes: ITreeNode[]) {
             show_only_matches_children: true
         },
     }).on("changed.jstree", (e, data) => {
+        // Change src attribute of iframe when item selected
         $("#docs-page").attr("src", `cmd_docs/${data.selected[0]}`);
     }).on("loaded.jstree", () => {
-        $("#jstree").jstree().select_node(nodes[0].id);
+        // Select and expand root node when page loads
+        const urlParams = new URLSearchParams(window.location.search);
+        let nodeId = urlParams.get("p");
+        nodeId = (nodeId === null) ? nodes[0].id : `${nodeId}.html`;
+        $("#jstree").jstree(true).select_node(nodeId);
+        $("#jstree").jstree(true).toggle_node(nodeId);
     });
 
     $("#tree-search-input").on("change keyup mouseup paste", updateSearch);
