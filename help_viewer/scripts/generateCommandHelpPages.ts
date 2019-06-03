@@ -28,7 +28,7 @@ const marked = require("marked");
     const rootHelpHtmlPath = path.join(docDir, "cli_root_help.html");
 
     const rootTreeNode: any = [{
-        id: rootHelpHtmlPath,
+        id: "cli_root_help.html",
         text: "(root)",
         children: []
     }];
