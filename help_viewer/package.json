@@ -2,7 +2,7 @@
   "name": "helpviewer",
   "version": "0.0.0",
   "scripts": {
-    "generateCommandDocs": "rimraf src/cmd_docs && ts-node ./scripts/generateCommandHelpPages.ts"
+    "build": "rimraf src/cmd_docs && ts-node ./scripts/generateCommandHelpPages.ts"
   },
   "private": true,
   "dependencies": {

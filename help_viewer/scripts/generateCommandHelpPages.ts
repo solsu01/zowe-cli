@@ -10,76 +10,97 @@ const marked = require("marked");
     process.env.FORCE_COLOR = "0";
     const docDir = path.join(__dirname, "..", "src", "cmd_docs");
     IO.createDirsSync(docDir);
-// Get all command definitions
+    // Get all command definitions
     const myConfig = ImperativeConfig.instance;
-// myConfig.callerLocation = __dirname;
+    // myConfig.callerLocation = __dirname;
     myConfig.loadedConfig = require("../../../packages/imperative");
 
-// Need to avoid any .definition file inside of __tests__ folders
+    // Need to avoid any .definition file inside of __tests__ folders
     myConfig.loadedConfig.commandModuleGlobs = ["**/!(__tests__)/cli/*.definition!(.d).*s"];
 
-// Need to set this for the internal caller location so that the commandModuleGlobs finds the commands
+    // Need to set this for the internal caller location so that the commandModuleGlobs finds the commands
     process.mainModule.filename = __dirname + "/../../../package.json";
 
     await Imperative.init(myConfig.loadedConfig);
     const loadedDefinitions = Imperative.fullCommandTree;
 
     let totalCommands = 0;
-    let oldCommandName = "";
+    const rootHelpHtmlPath = path.join(docDir, "cli_root_help.html");
 
-    function getGroupHelp(definition: any, indentLevel: number = 0) {
+    const rootTreeNode: any = {
+        id: rootHelpHtmlPath,
+        text: "(root)",
+        children: []
+    };
+    const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
 
+    const rootHelpContent = Constants.DESCRIPTION;
+    fs.writeFileSync(rootHelpHtmlPath, rootHelpContent);
+
+    function generateCommandHelpPage(definition: any, fullCommandName: string, tree: any) {
+        totalCommands++;
         let markdownContent = "";
-        markdownContent += definition.description ? definition.description.trim() + "\n" : "";
+        const helpGen = new DefaultHelpGenerator({
+            produceMarkdown: true,
+            rootCommandName: Constants.BINARY_NAME
+        } as any, {
+            commandDefinition: definition,
+            fullCommandTree: loadedDefinitions
+        });
+        markdownContent += helpGen.buildHelp();
+        // escape <group> and <command> fields
+        markdownContent = markdownContent.replace(/<group>/g, "`<group>`");
+        markdownContent = markdownContent.replace(/<command>/g, "`<command>`");
 
-        for (const child of definition.children) {
-
-            totalCommands++;
-
-
-            if (child.type !== "command") {
-                oldCommandName = " " + definition.name;
-                getGroupHelp(child, indentLevel + 1);
-                continue;
-            }
-
-            // markdownContent += util.format("##%s %s\n", "#".repeat(indentLevel), childNameSummary);
-
-            const helpGen = new DefaultHelpGenerator({
-                produceMarkdown: true,
-                rootCommandName: Constants.BINARY_NAME + oldCommandName
-            } as any, {
-                commandDefinition: child,
-                fullCommandTree: definition
-            });
-            markdownContent += helpGen.buildHelp();
-
-            // todo: unique file for each page
-            const docPath = path.join(docDir, "test.html");
-            fs.writeFileSync(docPath, marked(markdownContent));
-
-            console.log(chalk.blue("doc generated to " + docPath));
+        if (definition.type === "group") {
+            // this is disabled for the CLIReadme.md but we want to show children here
+            // so we'll call the help generator's children summary function even though
+            // it's usually skipped when producing markdown
+            markdownContent += `\n<h4>Commands</h4>\n` +
+                `${helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
+                    .slice(1) // delete the first line which says ###COMMANDS
+                    .join("\n")}`;
         }
-        oldCommandName = "";
+
+        const docFilename = (fullCommandName + ".html").trim();
+        const docPath = path.join(docDir, docFilename);
+        const treeNode: any = {
+            id: docFilename,
+            text: definition.name,
+            children: []
+        };
+        tree.children.push(treeNode);
+        fs.writeFileSync(docPath, marked(markdownContent));
+
+        console.log(chalk.grey("doc generated to " + docPath));
+
+        if (definition.children) {
+            for (const child of definition.children) {
+
+                generateCommandHelpPage(child, fullCommandName + "_" + child.name, treeNode);
+            }
+        }
     }
 
 // --------------------------------------------------------
 // Remove duplicates from Imperative.fullCommandTree
     const allDefSoFar: string[] = [];
-    const definitionsArray = loadedDefinitions.children.sort((a, b) => a.name.localeCompare(b.name)).filter((cmdDef) => {
-        if (allDefSoFar.indexOf(cmdDef.name) === -1) {
-            allDefSoFar.push(cmdDef.name);
-            return true;
-        }
-        return false;
-    });
+    const definitionsArray = loadedDefinitions.children.sort((a, b) => a.name.localeCompare(b.name))
+        .filter((cmdDef) => {
+            if (allDefSoFar.indexOf(cmdDef.name) === -1) {
+                allDefSoFar.push(cmdDef.name);
+                return true;
+            }
+            return false;
+        });
 // --------------------------------------------------------
 
     for (const def of definitionsArray) {
-        getGroupHelp(def);
+        generateCommandHelpPage(def, def.name, rootTreeNode);
     }
 
-    console.log(chalk.blue("Generated documentation pages for " + totalCommands + " commands"));
 
+    console.log(chalk.blue("Generated documentation pages for " + totalCommands + " commands"));
+    fs.writeFileSync(treeFile, "const treeNodes = " + JSON.stringify(rootTreeNode, null, 2) + ";");
     process.env.FORCE_COLOR = undefined;
 })();
