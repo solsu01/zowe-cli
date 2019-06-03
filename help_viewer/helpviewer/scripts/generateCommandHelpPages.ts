@@ -27,11 +27,11 @@ const marked = require("marked");
     let totalCommands = 0;
     const rootHelpHtmlPath = path.join(docDir, "cli_root_help.html");
 
-    const rootTreeNode: any = {
+    const rootTreeNode: any = [{
         id: rootHelpHtmlPath,
         text: "(root)",
         children: []
-    };
+    }];
     const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
 
     const rootHelpContent = Constants.DESCRIPTION;
@@ -96,7 +96,7 @@ const marked = require("marked");
 // --------------------------------------------------------
 
     for (const def of definitionsArray) {
-        generateCommandHelpPage(def, def.name, rootTreeNode);
+        generateCommandHelpPage(def, def.name, rootTreeNode[0]);
     }
 
 
