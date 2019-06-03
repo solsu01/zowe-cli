@@ -1,5 +1,5 @@
 import { DefaultHelpGenerator, Imperative, ImperativeConfig, IO } from "@zowe/imperative";
-import { Constants } from "../../../packages";
+import { Constants } from "../../packages";
 import chalk from "chalk";
 import * as fs from "fs";
 import * as path from "path";
@@ -13,13 +13,13 @@ const marked = require("marked");
     // Get all command definitions
     const myConfig = ImperativeConfig.instance;
     // myConfig.callerLocation = __dirname;
-    myConfig.loadedConfig = require("../../../packages/imperative");
+    myConfig.loadedConfig = require("../../packages/imperative");
 
     // Need to avoid any .definition file inside of __tests__ folders
     myConfig.loadedConfig.commandModuleGlobs = ["**/!(__tests__)/cli/*.definition!(.d).*s"];
 
     // Need to set this for the internal caller location so that the commandModuleGlobs finds the commands
-    process.mainModule.filename = __dirname + "/../../../package.json";
+    process.mainModule.filename = __dirname + "/../../package.json";
 
     await Imperative.init(myConfig.loadedConfig);
     const loadedDefinitions = Imperative.fullCommandTree;
