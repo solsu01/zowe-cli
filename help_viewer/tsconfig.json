@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
-    "outDir": "./",
+    "outDir": "./src",
     "sourceMap": true,
     "declaration": false,
     "module": "esnext",

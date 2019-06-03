@@ -35,8 +35,9 @@ function loadTree(nodes: ITreeNode[]) {
         },
     }).on("changed.jstree", (e, data) => {
         $("#docs-page").attr("src", `cmd_docs/${data.selected[0]}`);
+    }).on("loaded.jstree", () => {
+        $("#jstree").jstree().select_node(nodes[0].id);
     });
 
     $("#tree-search-input").on("change keyup mouseup paste", updateSearch);
-    
 }
