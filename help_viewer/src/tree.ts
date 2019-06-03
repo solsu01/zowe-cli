@@ -20,7 +20,7 @@ function loadTree(nodes: ITreeNode[]) {
     $("#jstree").jstree({
         core: {
             animation: 0,
-            check_callback: true,
+            check_callback: false,
             themes: {
                 icons: false,
                 multiple: false
@@ -29,6 +29,7 @@ function loadTree(nodes: ITreeNode[]) {
         },
         plugins: ["search", "wholerow"],
         search: {
+            fuzzy: true,
             show_only_matches: true,
             show_only_matches_children: true
         },
@@ -37,4 +38,5 @@ function loadTree(nodes: ITreeNode[]) {
     });
 
     $("#tree-search-input").on("change keyup mouseup paste", updateSearch);
+    
 }
