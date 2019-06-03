@@ -29,7 +29,6 @@ function loadTree(nodes: ITreeNode[]) {
         },
         plugins: ["search", "wholerow"],
         search: {
-            fuzzy: true,
             show_only_matches: true,
             show_only_matches_children: true
         },
