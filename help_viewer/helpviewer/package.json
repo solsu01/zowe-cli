@@ -1,18 +1,24 @@
 {
   "name": "helpviewer",
   "version": "0.0.0",
-  "scripts": {},
+  "scripts": {
+    "generateCommandDocs": "rimraf src/cmd_docs && ts-node ./scripts/generateCommandHelpPages.ts"
+  },
   "private": true,
   "dependencies": {
     "bootstrap": "4.3.1",
     "jquery": "3.4.1",
-    "jstree": "^3.3.8",
-    "popper.js": "1.15.0",
-    "ts-node": "^8.2.0",
-    "typescript": "^3.5.1"
+    "jstree": "3.3.8",
+    "popper.js": "1.15.0"
   },
   "devDependencies": {
     "@types/jquery": "^3.3.29",
-    "@types/jstree": "^3.3.37"
+    "@types/jstree": "^3.3.37",
+    "chalk": "^2.4.2",
+    "marked": "^0.6.2",
+    "mustache": "^3.0.1",
+    "rimraf": "^2.6.3",
+    "ts-node": "^8.2.0",
+    "typescript": "^3.5.1"
   }
 }
