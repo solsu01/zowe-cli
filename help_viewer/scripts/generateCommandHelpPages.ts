@@ -53,7 +53,8 @@ const marked = require("marked");
         // escape <group> and <command> fields
         markdownContent = markdownContent.replace(/<group>/g, "`<group>`");
         markdownContent = markdownContent.replace(/<command>/g, "`<command>`");
-        markdownContent = markdownContent.replace(/\/([.-])/g, "$1");
+        markdownContent = markdownContent.replace(/\\([.-])/g, "$1");
+        markdownContent = markdownContent.replace(/[‘’]/g, "'");
         if (definition.type === "group") {
             // this is disabled for the CLIReadme.md but we want to show children here
             // so we'll call the help generator's children summary function even though
