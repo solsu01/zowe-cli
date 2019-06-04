@@ -17,6 +17,14 @@ interface ITreeNode {
 
 let searchTimeout: number = 0;
 
+function searchTree(searchStr: string, node: any): boolean {
+    if (node.parent === "#") {
+        return false;  // Don't match root node
+    }
+
+    return node.id.slice(0, -5).replace(/_/g, " ").indexOf(searchStr) !== -1;
+}
+
 function updateSearch() {
     if (searchTimeout) {
         clearTimeout(searchTimeout);
@@ -28,10 +36,11 @@ function updateSearch() {
     }, 250);
 }
 
-function receiveMessage(event) {
+function updateTree(event) {
     const nodeId = event.data.split("/").slice(-1)[0];
     $("#jstree").jstree(true).deselect_all();
     $("#jstree").jstree(true).select_node(nodeId);
+
     if (!$("#jstree").jstree(true).is_open(nodeId)) {
         $("#jstree").jstree(true).toggle_node(nodeId);
     }
@@ -41,17 +50,17 @@ function loadTree(nodes: ITreeNode[]) {
     $("#jstree").jstree({
         core: {
             animation: 0,
-            check_callback: false,
+            multiple: false,
             themes: {
-                icons: false,
-                multiple: false
+                icons: false
             },
             data: nodes
         },
         plugins: ["search", "wholerow"],
         search: {
             show_only_matches: true,
-            show_only_matches_children: true
+            show_only_matches_children: true,
+            search_callback: searchTree
         },
     }).on("changed.jstree", (e, data) => {
         // Change src attribute of iframe when item selected
@@ -66,5 +75,5 @@ function loadTree(nodes: ITreeNode[]) {
     });
 
     $("#tree-search-input").on("change keyup mouseup paste", updateSearch);
-    window.addEventListener("message", receiveMessage, false);
+    window.addEventListener("message", updateTree, false);
 }

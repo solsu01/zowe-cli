@@ -11,7 +11,11 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get("t") === "1") {
     var links = document.getElementsByTagName("a");
     for (var i = 0; i < links.length; i++) {
-        links[i].setAttribute("onclick", "window.parent.postMessage(this.href, '*'); return false;");
+        if (links[i].href.startsWith("http")) {
+            links[i].setAttribute("target", "_parent");
+        } else {
+            links[i].setAttribute("onclick", "window.parent.postMessage(this.href, '*'); return false;");
+        }
     }
 }
 </script>`;
@@ -45,8 +49,29 @@ if (urlParams.get("t") === "1") {
     const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
 
     let rootHelpContent = marked(Constants.DESCRIPTION);
-    rootHelpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" /><article class=\"markdown-body\">\n" + rootHelpContent + "</article>"
-        + iframeHackScript;
+    rootHelpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" /><article class=\"markdown-body\">\n<h2>" +
+    "<a href=\"cli_root_help.html\">" + Constants.BINARY_NAME + "</a></h2>\n" + rootHelpContent;
+    const helpGen = new DefaultHelpGenerator({
+        produceMarkdown: true,
+        rootCommandName: Constants.BINARY_NAME
+    } as any, {
+        commandDefinition: loadedDefinitions,
+        fullCommandTree: loadedDefinitions
+    });
+    rootHelpContent += marked(`\n<h4>Groups</h4>\n` +
+        `${helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
+            .slice(1) // delete the first line which says ###GROUPS
+            .filter((item, pos, self) => self.indexOf(item) === pos)  // remove duplicate lines
+            .map((groupLine: string) => {
+                const match = groupLine.match(/([a-z-]+(?:\s\|\s[a-z-]+)?)/i);
+                if (match) {
+                    const href = `${match[0].split(" ")[0]}.html`;
+                    return `* <a href="${href}">${match[0]}</a> -` + groupLine.slice(match[0].length + 3);
+                }
+                return groupLine;
+            })
+            .join("\n")}`);
+    rootHelpContent += "</article>" + iframeHackScript;
     fs.writeFileSync(rootHelpHtmlPath, rootHelpContent);
 
     function generateBreadcrumb(fullCommandName: string): string {
@@ -87,7 +112,7 @@ if (urlParams.get("t") === "1") {
                         const match = commandLine.match(/([a-z-]+(?:\s\|\s[a-z-]+)?)/i);
                         if (match) {
                             const href = `${fullCommandName}_${match[0].split(" ")[0]}.html`;
-                            return `<a href="${href}">${match[0]}</a> -` + commandLine.slice(match[0].length + 3);
+                            return `* <a href="${href}">${match[0]}</a> -` + commandLine.slice(match[0].length + 3);
                         }
                         return commandLine;
                     })
