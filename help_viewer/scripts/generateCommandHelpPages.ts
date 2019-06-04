@@ -30,7 +30,7 @@ const marked = require("marked");
 
     const rootTreeNode: any = [{
         id: "cli_root_help.html",
-        text: "(root)",
+        text: Constants.BINARY_NAME,
         children: []
     }];
     const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
@@ -42,7 +42,7 @@ const marked = require("marked");
 
     function generateCommandHelpPage(definition: any, fullCommandName: string, tree: any) {
         totalCommands++;
-        let markdownContent = `<h2>zowe → ${fullCommandName.replace(/_/g, " → ")}</h2>\n`;
+        let markdownContent = `<h2>${Constants.BINARY_NAME} -> ${fullCommandName.replace(/_/g, " -> ")}</h2>\n`;
         const helpGen = new DefaultHelpGenerator({
             produceMarkdown: true,
             rootCommandName: Constants.BINARY_NAME
