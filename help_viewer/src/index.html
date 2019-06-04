@@ -23,17 +23,17 @@
 <div class="container-fluid">
     <div class="row" style="height:100%">
         <div id="sidebar" class="col col-md-3">
-            <img src="./img/zowe_logo.png" style="width: 80px; margin-bottom: 10px;"/>
-            <span style="display: inline-block; padding-top: 20px"><h2>Zowe CLI</h2></span>
+            <img id="header-image" src="./img/zowe_logo.png" />
+            <h2 id="header-text">Zowe CLI</h2>
             <div id="tree-search">
                 <input id="tree-search-input" type="search" placeholder="Search..." class="form-control">
                 <span id="tree-search-clear" class="glyphicon glyphicon-remove-circle"></span>
             </div>
-            <div id="jstree" style="overflow: auto; max-height: 76vh;"></div>
-            <div id="footer">hi i am little footer boi</div>
+            <div id="jstree"></div>
+            <div id="footer">Copyright © 2019 Mr. Somebody</div>
         </div>
 
-        <div id="docs-wrapper" class="col col-md-9" style="padding-right: 0;">
+        <div id="docs-wrapper" class="col col-md-9">
             <iframe id="docs-page"></iframe>
         </div>
     </div>

@@ -11,7 +11,7 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get("t") === "1") {
     var links = document.getElementsByTagName("a");
     for (var i = 0; i < links.length; i++) {
-        if (links[i].href.startsWith("http")) {
+        if (links[i].host !== window.location.host) {
             links[i].setAttribute("target", "_parent");
         } else {
             links[i].setAttribute("onclick", "window.parent.postMessage(this.href, '*'); return false;");
