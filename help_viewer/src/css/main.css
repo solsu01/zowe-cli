@@ -13,10 +13,22 @@
     overflow: hidden;
 }
 
+#footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    font-size: small;
+    padding: 4px;
+    background-color: purple;
+    text-align: center;
+    color: white;
+}
+
 #sidebar {
     background-color: lavender;
 }
 
 #tree-search {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }

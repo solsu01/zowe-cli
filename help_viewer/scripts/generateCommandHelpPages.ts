@@ -39,7 +39,7 @@ const marked = require("marked");
 
     function generateCommandHelpPage(definition: any, fullCommandName: string, tree: any) {
         totalCommands++;
-        let markdownContent = "";
+        let markdownContent = `<h2>zowe → ${fullCommandName.replace(/_/g, " → ")}</h2>\n`;
         const helpGen = new DefaultHelpGenerator({
             produceMarkdown: true,
             rootCommandName: Constants.BINARY_NAME
