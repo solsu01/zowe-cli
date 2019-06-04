@@ -3,6 +3,7 @@ import { Constants } from "../../packages";
 import chalk from "chalk";
 import * as fs from "fs";
 import * as path from "path";
+import { markdownCss } from "./markdownCss";
 
 const marked = require("marked");
 
@@ -34,7 +35,9 @@ const marked = require("marked");
     }];
     const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
 
-    const rootHelpContent = Constants.DESCRIPTION;
+
+    let rootHelpContent = marked(Constants.DESCRIPTION);
+    rootHelpContent = markdownCss + "<article  class=\"markdown-body\">\n" + rootHelpContent + "</article>";
     fs.writeFileSync(rootHelpHtmlPath, rootHelpContent);
 
     function generateCommandHelpPage(definition: any, fullCommandName: string, tree: any) {
@@ -70,7 +73,8 @@ const marked = require("marked");
             children: []
         };
         tree.children.push(treeNode);
-        fs.writeFileSync(docPath, marked(markdownContent));
+        const helpContent = markdownCss + "<article  class=\"markdown-body\">\n" + marked(markdownContent) + "</article>";
+        fs.writeFileSync(docPath, helpContent);
 
         console.log(chalk.grey("doc generated to " + docPath));
 
@@ -100,7 +104,7 @@ const marked = require("marked");
     }
 
 
-    console.log(chalk.blue("Generated documentation pages for " + totalCommands + " commands"));
+    console.log(chalk.blue("Generated documentation pages for " + totalCommands + " commands and groups"));
     fs.writeFileSync(treeFile, "const treeNodes = " + JSON.stringify(rootTreeNode, null, 2) + ";");
     process.env.FORCE_COLOR = undefined;
 })();
