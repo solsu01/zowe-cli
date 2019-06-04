@@ -15,6 +15,7 @@ interface ITreeNode {
     children: undefined | ITreeNode[];
 }
 
+let rootName: string = null;
 let searchTimeout: number = 0;
 
 function searchTree(searchStr: string, node: any): boolean {
@@ -22,7 +23,19 @@ function searchTree(searchStr: string, node: any): boolean {
         return false;  // Don't match root node
     }
 
-    return node.id.slice(0, -5).replace(/_/g, " ").indexOf(searchStr) !== -1;
+    searchStr = searchStr.trim();
+    if (searchStr.startsWith(`${rootName} `)) {
+        searchStr = searchStr.slice(rootName.length + 1);
+    }
+
+    const fullCmd: string = node.id.slice(0, -5).replace(/_/g, " ");
+    const matchIndex: number = fullCmd.indexOf(searchStr);
+
+    if (matchIndex === - 1) {
+        return false;
+    } else {
+        return fullCmd.indexOf(" ", matchIndex + searchStr.length) === -1;
+    }
 }
 
 function updateSearch() {
@@ -40,10 +53,6 @@ function updateTree(event) {
     const nodeId = event.data.split("/").slice(-1)[0];
     $("#jstree").jstree(true).deselect_all();
     $("#jstree").jstree(true).select_node(nodeId);
-
-    if (!$("#jstree").jstree(true).is_open(nodeId)) {
-        $("#jstree").jstree(true).toggle_node(nodeId);
-    }
 }
 
 function loadTree(nodes: ITreeNode[]) {
@@ -67,6 +76,7 @@ function loadTree(nodes: ITreeNode[]) {
         $("#docs-page").attr("src", `cmd_docs/${data.selected[0]}?t=1`);
     }).on("loaded.jstree", () => {
         // Select and expand root node when page loads
+        rootName = nodes[0].text;
         const urlParams = new URLSearchParams(window.location.search);
         let nodeId = urlParams.get("p");
         nodeId = (nodeId === null) ? nodes[0].id : `${nodeId}.html`;
