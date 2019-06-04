@@ -26,7 +26,8 @@
   "files":   [
     "lib",
     "docs",
-    "scripts"
+    "scripts",
+    "help_viewer"
   ],
   "publishConfig": {"registry": "https://gizaartifactory.jfrog.io/gizaartifactory/api/npm/npm-local-release/"},
   "imperative": {"configurationModule": "lib/imperative.js"},
