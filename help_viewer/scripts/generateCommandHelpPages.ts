@@ -3,7 +3,6 @@ import { Constants } from "../../packages";
 import chalk from "chalk";
 import * as fs from "fs";
 import * as path from "path";
-import { markdownCss } from "./markdownCss";
 
 const marked = require("marked");
 
@@ -46,7 +45,8 @@ if (urlParams.get("t") === "1") {
     const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
 
     let rootHelpContent = marked(Constants.DESCRIPTION);
-    rootHelpContent = markdownCss + "<article class=\"markdown-body\">\n" + rootHelpContent + "</article>";
+    rootHelpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" /><article class=\"markdown-body\">\n" + rootHelpContent + "</article>"
+        + iframeHackScript;
     fs.writeFileSync(rootHelpHtmlPath, rootHelpContent);
 
     function generateBreadcrumb(fullCommandName: string): string {
@@ -74,7 +74,8 @@ if (urlParams.get("t") === "1") {
         // escape <group> and <command> fields
         markdownContent = markdownContent.replace(/<group>/g, "`<group>`");
         markdownContent = markdownContent.replace(/<command>/g, "`<command>`");
-
+        markdownContent = markdownContent.replace(/\\([.-])/g, "$1");
+        markdownContent = markdownContent.replace(/[‘’]/g, "'");
         if (definition.type === "group") {
             // this is disabled for the CLIReadme.md but we want to show children here
             // so we'll call the help generator's children summary function even though
@@ -101,7 +102,8 @@ if (urlParams.get("t") === "1") {
             children: []
         };
         tree.children.push(treeNode);
-        const helpContent = markdownCss + "<article class=\"markdown-body\">\n" + marked(markdownContent) + "</article>" + iframeHackScript;
+        const helpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" /> <article class=\"markdown-body\">\n"
+            + marked(markdownContent) + "</article>" + iframeHackScript;
         fs.writeFileSync(docPath, helpContent);
 
         console.log(chalk.grey("doc generated to " + docPath));
