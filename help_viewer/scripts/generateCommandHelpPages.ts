@@ -3,7 +3,6 @@ import { Constants } from "../../packages";
 import chalk from "chalk";
 import * as fs from "fs";
 import * as path from "path";
-import { markdownCss } from "./markdownCss";
 
 const marked = require("marked");
 
@@ -37,7 +36,7 @@ const marked = require("marked");
 
 
     let rootHelpContent = marked(Constants.DESCRIPTION);
-    rootHelpContent = markdownCss + "<article  class=\"markdown-body\">\n" + rootHelpContent + "</article>";
+    rootHelpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" /><article  class=\"markdown-body\">\n" + rootHelpContent + "</article>";
     fs.writeFileSync(rootHelpHtmlPath, rootHelpContent);
 
     function generateCommandHelpPage(definition: any, fullCommandName: string, tree: any) {
@@ -54,7 +53,7 @@ const marked = require("marked");
         // escape <group> and <command> fields
         markdownContent = markdownContent.replace(/<group>/g, "`<group>`");
         markdownContent = markdownContent.replace(/<command>/g, "`<command>`");
-
+        markdownContent = markdownContent.replace(/\/([.-])/g, "$1");
         if (definition.type === "group") {
             // this is disabled for the CLIReadme.md but we want to show children here
             // so we'll call the help generator's children summary function even though
@@ -73,7 +72,8 @@ const marked = require("marked");
             children: []
         };
         tree.children.push(treeNode);
-        const helpContent = markdownCss + "<article  class=\"markdown-body\">\n" + marked(markdownContent) + "</article>";
+        const helpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" /> <article  class=\"markdown-body\">\n"
+            + marked(markdownContent) + "</article>";
         fs.writeFileSync(docPath, helpContent);
 
         console.log(chalk.grey("doc generated to " + docPath));
