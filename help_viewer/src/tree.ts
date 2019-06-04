@@ -17,6 +17,15 @@ function updateSearch() {
     }, 250);
 }
 
+function receiveMessage(event) {
+    const nodeId = event.data.split("/").slice(-1)[0];
+    $("#jstree").jstree(true).deselect_all();
+    $("#jstree").jstree(true).select_node(nodeId);
+    if (!$("#jstree").jstree(true).is_open(nodeId)) {
+        $("#jstree").jstree(true).toggle_node(nodeId);
+    }
+}
+
 function loadTree(nodes: ITreeNode[]) {
     $("#jstree").jstree({
         core: {
@@ -35,7 +44,7 @@ function loadTree(nodes: ITreeNode[]) {
         },
     }).on("changed.jstree", (e, data) => {
         // Change src attribute of iframe when item selected
-        $("#docs-page").attr("src", `cmd_docs/${data.selected[0]}`);
+        $("#docs-page").attr("src", `cmd_docs/${data.selected[0]}?t=1`);
     }).on("loaded.jstree", () => {
         // Select and expand root node when page loads
         const urlParams = new URLSearchParams(window.location.search);
@@ -46,4 +55,5 @@ function loadTree(nodes: ITreeNode[]) {
     });
 
     $("#tree-search-input").on("change keyup mouseup paste", updateSearch);
+    window.addEventListener("message", receiveMessage, false);
 }

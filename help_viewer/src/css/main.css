@@ -19,10 +19,9 @@
     bottom: 0;
     left: 0;
     font-size: small;
-    padding: 4px;
-    background-color: purple;
+    padding-bottom: 8px;
     text-align: center;
-    color: white;
+    color: #888;
 }
 
 #sidebar {

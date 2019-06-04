@@ -7,6 +7,16 @@ import { markdownCss } from "./markdownCss";
 
 const marked = require("marked");
 
+const iframeHackScript = `<script type="text/javascript">
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("t") === "1") {
+    var links = document.getElementsByTagName("a");
+    for (var i = 0; i < links.length; i++) {
+        links[i].setAttribute("onclick", "window.parent.postMessage(this.href, '*'); return false;");
+    }
+}
+</script>`;
+
 (async () => {
     process.env.FORCE_COLOR = "0";
     const docDir = path.join(__dirname, "..", "src", "cmd_docs");
@@ -35,14 +45,24 @@ const marked = require("marked");
     }];
     const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
 
-
     let rootHelpContent = marked(Constants.DESCRIPTION);
-    rootHelpContent = markdownCss + "<article  class=\"markdown-body\">\n" + rootHelpContent + "</article>";
+    rootHelpContent = markdownCss + "<article class=\"markdown-body\">\n" + rootHelpContent + "</article>";
     fs.writeFileSync(rootHelpHtmlPath, rootHelpContent);
+
+    function generateBreadcrumb(fullCommandName: string): string {
+        const crumbs: string[] = [];
+        crumbs.push(`<a href="cli_root_help.html">${Constants.BINARY_NAME}</a>`);
+        let hrefPrefix: string = "";
+        fullCommandName.split("_").forEach((linkText: string) => {
+            crumbs.push(`<a href="${hrefPrefix}${linkText}.html">${linkText}</a>`);
+            hrefPrefix += `${linkText}_`;
+        });
+        return crumbs.join(" -> ");
+    }
 
     function generateCommandHelpPage(definition: any, fullCommandName: string, tree: any) {
         totalCommands++;
-        let markdownContent = `<h2>${Constants.BINARY_NAME} -> ${fullCommandName.replace(/_/g, " -> ")}</h2>\n`;
+        let markdownContent = `<h2>` + generateBreadcrumb(fullCommandName) + `</h2>\n`;
         const helpGen = new DefaultHelpGenerator({
             produceMarkdown: true,
             rootCommandName: Constants.BINARY_NAME
@@ -62,6 +82,14 @@ const marked = require("marked");
             markdownContent += `\n<h4>Commands</h4>\n` +
                 `${helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
                     .slice(1) // delete the first line which says ###COMMANDS
+                    .map((commandLine: string) => {
+                        const match = commandLine.match(/([a-z-]+(?:\s\|\s[a-z-]+)?)/i);
+                        if (match) {
+                            const href = `${fullCommandName}_${match[0].split(" ")[0]}.html`;
+                            return `<a href="${href}">${match[0]}</a> -` + commandLine.slice(match[0].length + 3);
+                        }
+                        return commandLine;
+                    })
                     .join("\n")}`;
         }
 
@@ -73,7 +101,7 @@ const marked = require("marked");
             children: []
         };
         tree.children.push(treeNode);
-        const helpContent = markdownCss + "<article  class=\"markdown-body\">\n" + marked(markdownContent) + "</article>";
+        const helpContent = markdownCss + "<article class=\"markdown-body\">\n" + marked(markdownContent) + "</article>" + iframeHackScript;
         fs.writeFileSync(docPath, helpContent);
 
         console.log(chalk.grey("doc generated to " + docPath));
