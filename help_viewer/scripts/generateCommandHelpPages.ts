@@ -63,10 +63,10 @@ if (urlParams.get("t") === "1") {
             .slice(1) // delete the first line which says ###GROUPS
             .filter((item, pos, self) => self.indexOf(item) === pos)  // remove duplicate lines
             .map((groupLine: string) => {
-                const match = groupLine.match(/([a-z-]+(?:\s\|\s[a-z-]+)?)/i);
+                const match = groupLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)?)/i);
                 if (match) {
-                    const href = `${match[0].split(" ")[0]}.html`;
-                    return `* <a href="${href}">${match[0]}</a> -` + groupLine.slice(match[0].length + 3);
+                    const href = `${match[1].split(" ")[0]}.html`;
+                    return `* <a href="${href}">${match[1]}</a> -` + groupLine.slice(match[0].length).replace(/\.\s*$/, "");
                 }
                 return groupLine;
             })
@@ -109,10 +109,10 @@ if (urlParams.get("t") === "1") {
                 `${helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
                     .slice(1) // delete the first line which says ###COMMANDS
                     .map((commandLine: string) => {
-                        const match = commandLine.match(/([a-z-]+(?:\s\|\s[a-z-]+)?)/i);
+                        const match = commandLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)?)\s*[A-Z]/);
                         if (match) {
-                            const href = `${fullCommandName}_${match[0].split(" ")[0]}.html`;
-                            return `* <a href="${href}">${match[0]}</a> -` + commandLine.slice(match[0].length + 3);
+                            const href = `${fullCommandName}_${match[1].split(" ")[0]}.html`;
+                            return `* <a href="${href}">${match[1]}</a> -` + commandLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
                         }
                         return commandLine;
                     })

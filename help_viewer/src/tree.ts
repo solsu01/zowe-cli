@@ -23,11 +23,6 @@ function searchTree(searchStr: string, node: any): boolean {
         return false;  // Don't match root node
     }
 
-    searchStr = searchStr.trim();
-    if (searchStr.startsWith(`${rootName} `)) {
-        searchStr = searchStr.slice(rootName.length + 1);
-    }
-
     const fullCmd: string = node.id.slice(0, -5).replace(/_/g, " ");
     const matchIndex: number = fullCmd.indexOf(searchStr);
 
@@ -44,8 +39,15 @@ function updateSearch() {
     }
 
     searchTimeout = setTimeout(() => {
-        const searchText = $("#tree-search-input").val().toString();
-        $("#jstree").jstree(true).search(searchText);
+        let searchStr = $("#tree-search-input").val().toString().trim();
+
+        if (searchStr.startsWith(`${rootName} `)) {
+            searchStr = searchStr.slice(rootName.length).trim();
+        }
+
+        if (searchStr.length > 0) {
+            $("#jstree").jstree(true).search(searchStr);
+        }
     }, 250);
 }
 
