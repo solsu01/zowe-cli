@@ -7,7 +7,7 @@ Object {
   ],
   "description": "Lists z/OSMF provisioning information such as the provisioned instances from the registry, the provisioned instance details, the available provisioning templates and provisioning template details.",
   "name": "list",
-  "summary": "List Provisioning Information",
+  "summary": "List provisioning information",
   "type": "group",
 }
 `;
