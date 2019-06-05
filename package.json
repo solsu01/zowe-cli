@@ -58,7 +58,8 @@
     "doc:generate": "npm run doc:clean && gulp doc",
     "doc:clean": "rimraf docs/CLIReadme.md",
     "typedocSpecifySrc": "typedoc --options ./typedoc.json",
-    "audit:public": "npm audit --registry https://registry.npmjs.org/"
+    "audit:public": "npm audit --registry https://registry.npmjs.org/",
+    "prepublishOnly": "cd help_viewer && npm run build"
   },
   "dependencies": {
     "@zowe/imperative": "^4.1.3-alpha.201906041657",
