@@ -46,19 +46,19 @@ function updateSearch() {
         }
 
         if (searchStr.length > 0) {
-            $("#jstree").jstree(true).search(searchStr);
+            $("#cmd-tree").jstree(true).search(searchStr);
         }
     }, 250);
 }
 
 function updateTree(event) {
     const nodeId = event.data.split("/").slice(-1)[0];
-    $("#jstree").jstree(true).deselect_all();
-    $("#jstree").jstree(true).select_node(nodeId);
+    $("#cmd-tree").jstree(true).deselect_all();
+    $("#cmd-tree").jstree(true).select_node(nodeId);
 }
 
 function loadTree(nodes: ITreeNode[]) {
-    $("#jstree").jstree({
+    $("#cmd-tree").jstree({
         core: {
             animation: 0,
             multiple: false,
@@ -82,8 +82,8 @@ function loadTree(nodes: ITreeNode[]) {
         const urlParams = new URLSearchParams(window.location.search);
         let nodeId = urlParams.get("p");
         nodeId = (nodeId === null) ? nodes[0].id : `${nodeId}.html`;
-        $("#jstree").jstree(true).select_node(nodeId);
-        $("#jstree").jstree(true).toggle_node(nodeId);
+        $("#cmd-tree").jstree(true).select_node(nodeId);
+        $("#cmd-tree").jstree(true).toggle_node(nodeId);
     });
 
     $("#tree-search-input").on("change keyup mouseup paste", updateSearch);

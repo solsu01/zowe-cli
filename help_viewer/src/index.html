@@ -12,32 +12,45 @@
 -->
 
 <title>Zowe CLI Docs</title>
-<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="../node_modules/bootstrap-css-only/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="../node_modules/jstree/dist/themes/default/style.min.css"/>
 <link rel="stylesheet" href="./css/main.css"/>
 <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="../node_modules/jstree/dist/jstree.min.js"></script>
+<script src="../node_modules/split.js/dist/split.min.js"></script>
 <script src="./tree.js"></script>
 <script src="./tree-nodes.js"></script>
 
-<div class="container-fluid">
-    <div class="row" style="height:100%">
-        <div id="sidebar" class="col col-md-3">
-            <img id="header-image" src="./img/zowe_logo.png" />
-            <h2 id="header-text">Zowe CLI</h2>
-            <div id="tree-search">
-                <input id="tree-search-input" type="search" placeholder="Search..." class="form-control">
-                <span id="tree-search-clear" class="glyphicon glyphicon-remove-circle"></span>
-            </div>
-            <div id="jstree"></div>
-            <div id="footer">Copyright © 2019 Mr. Somebody</div>
-        </div>
+<div id="panel-container">
+    <div id="panel-left">
+        <img id="header-image" src="./img/zowe_logo.png"/>
+        <h2 id="header-text">Zowe CLI</h2>
+        <input id="tree-search" type="search" placeholder="Search..." class="form-control"/>
+        <div id="cmd-tree"></div>
+        <div id="footer">Copyright © 2019 Mr. Somebody</div>
+    </div>
 
-        <div id="docs-wrapper" class="col col-md-9">
-            <iframe id="docs-page"></iframe>
-        </div>
+    <div id="panel-right">
+        <iframe id="docs-page"></iframe>
     </div>
 </div>
 
-<script type="text/javascript">loadTree(treeNodes);</script>
+<script type="text/javascript">
+const splitter = Split(["#panel-left", "#panel-right"], {
+    sizes: [20, 80],
+    minSize: 0
+});
+$(".gutter").on("dblclick", () => {
+    let isShown = splitter.getSizes()[0] > 1;
+    if (isShown) {
+        $("#panel-left").children().hide();
+        $("#panel-left").css("min-width", "0px");
+        splitter.setSizes([0, 100]);
+    } else {
+        splitter.setSizes([20, 80]);
+        $("#panel-left").children().show();
+        $("#panel-left").css("min-width", "220px");
+    }
+});
+loadTree(treeNodes);
+</script>
