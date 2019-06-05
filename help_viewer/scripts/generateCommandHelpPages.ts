@@ -50,8 +50,8 @@ if (urlParams.get("t") === "1") {
 
     let rootHelpContent = marked(Constants.DESCRIPTION);
     rootHelpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" /><article class=\"markdown-body\">\n<h2>" +
-    "<a href=\"cli_root_help.html\">" + Constants.BINARY_NAME + "</a></h2>\n" + rootHelpContent;
-    const helpGen = new DefaultHelpGenerator({
+        "<a href=\"cli_root_help.html\">" + Constants.BINARY_NAME + "</a></h2>\n" + rootHelpContent;
+    let helpGen = new DefaultHelpGenerator({
         produceMarkdown: true,
         rootCommandName: Constants.BINARY_NAME
     } as any, {
@@ -88,7 +88,7 @@ if (urlParams.get("t") === "1") {
     function generateCommandHelpPage(definition: any, fullCommandName: string, tree: any) {
         totalCommands++;
         let markdownContent = `<h2>` + generateBreadcrumb(fullCommandName) + `</h2>\n`;
-        const helpGen = new DefaultHelpGenerator({
+        helpGen = new DefaultHelpGenerator({
             produceMarkdown: true,
             rootCommandName: Constants.BINARY_NAME
         } as any, {
@@ -127,8 +127,14 @@ if (urlParams.get("t") === "1") {
             children: []
         };
         tree.children.push(treeNode);
-        const helpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" /> <article class=\"markdown-body\">\n"
-            + marked(markdownContent) + "</article>" + iframeHackScript;
+
+        markdownContent = marked(markdownContent);
+        markdownContent = markdownContent.replace(/<code>\$(.*?)<\/code>/g,
+            "<code>$1</code> <button class=\"btn\" data-clipboard-text='$1'>Copy</button>");
+        const helpContent =
+            "<link rel=\"stylesheet\" href=\"../css/github.css\" /> <article class=\"markdown-body\">\n"
+            + markdownContent + "</article>" + "<script src=\"../../node_modules/clipboard/dist/clipboard.js\"></script> " +
+            "<script type=\"text/javascript\">new ClipboardJS('.btn');</script>" + iframeHackScript;
         fs.writeFileSync(docPath, helpContent);
 
         console.log(chalk.grey("doc generated to " + docPath));
