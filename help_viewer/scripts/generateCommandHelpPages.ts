@@ -37,7 +37,7 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
         text: Constants.BINARY_NAME,
         children: []
     }];
-    const aliasList: { [key: string]: string } = {};
+    const aliasList: { [key: string]: string[] } = {};
     const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
 
     let rootHelpContent = marked(Constants.DESCRIPTION);
@@ -60,7 +60,13 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
                     const aliasMatch = groupLine.match(/([a-z-]+)\s\|\s([a-z-]+)/);
 
                     if (aliasMatch) {
-                        aliasList[aliasMatch[2]] = aliasMatch[1];
+                        const longName = aliasMatch[1];
+                        const shortName = aliasMatch[2];
+                        if (aliasList[shortName] === undefined) {
+                            aliasList[shortName] = [aliasMatch[1]];
+                        } else if (aliasList[shortName].indexOf(longName) === -1) {
+                            aliasList[shortName].push(longName);
+                        }
                     }
 
                     const href = `${match[1].split(" ")[0]}.html`;
@@ -112,7 +118,13 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
                             const aliasMatch = commandLine.match(/([a-z-]+)\s\|\s([a-z-]+)/);
 
                             if (aliasMatch) {
-                                aliasList[aliasMatch[2]] = aliasMatch[1];
+                                const longName = aliasMatch[1];
+                                const shortName = aliasMatch[2];
+                                if (aliasList[shortName] === undefined) {
+                                    aliasList[shortName] = [aliasMatch[1]];
+                                } else if (aliasList[shortName].indexOf(longName) === -1) {
+                                    aliasList[shortName].push(longName);
+                                }
                             }
 
                             const href = `${fullCommandName}_${match[1].split(" ")[0]}.html`;
@@ -127,7 +139,7 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
         const docPath = path.join(docDir, docFilename);
         const treeNode: any = {
             id: docFilename,
-            text: definition.name,
+            text: [definition.name, ...definition.aliases].join(" | "),
             children: []
         };
         tree.children.push(treeNode);

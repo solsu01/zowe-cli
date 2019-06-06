@@ -15,7 +15,7 @@ interface ITreeNode {
     children: undefined | ITreeNode[];
 }
 
-let cmdAliases: { [key: string]: string } = {};
+let cmdAliases: { [key: string]: string[] } = {};
 let currentNodeId: string = null;
 let isFlattened: boolean = false;
 let nodeData: ITreeNode[] = [];
@@ -27,28 +27,49 @@ function searchTree(searchStr: string, node: any): boolean {
     }
 
     const fullCmd: string = node.id.slice(0, -5).replace(/_/g, " ");
-    const matchIndex: number = fullCmd.indexOf(searchStr);
-
-    if (matchIndex === - 1) {
-        return false;
-    } else if (isFlattened) {
-        return true;
-    } else {
-        return fullCmd.indexOf(" ", matchIndex + searchStr.length) === -1;
-    }
-}
-
-function genSuggestions(searchStr: string, process: any) {
-    const searchWords: string[] = searchStr.split(" ");
-    for (let i = 0; i < searchWords.length; i++) {
-        if (cmdAliases[searchWords[i]] !== undefined) {
-            searchWords[i] = cmdAliases[searchWords[i]];
+    for (const newSearchStr of permuteSearchStr(searchStr)) {
+        const matchIndex: number = fullCmd.indexOf(newSearchStr);
+        if (matchIndex !== -1) {
+            if (isFlattened || (fullCmd.indexOf(" ", matchIndex + newSearchStr.length) === -1)) {
+                return true;
+            }
         }
     }
 
-    const altSearchStr = searchWords.join(" ");
-    if (altSearchStr !== searchStr) {
-        process([altSearchStr]);
+    return false;
+}
+
+function permuteSearchStr(searchStr: string): string[] {
+    const searchWords: string[] = searchStr.split(" ");
+    const searchWordsList: string[][] = [searchWords];
+
+    for (let i = 0; i < searchWords.length; i++) {
+        const word = searchWords[i];
+        if (cmdAliases[word] !== undefined) {
+            const newSearchWordsList: string[][] = [];
+            for (const oldSearchWords of searchWordsList) {
+                for (const alias of cmdAliases[word]) {
+                    newSearchWordsList.push([...oldSearchWords.slice(0, i), alias, ...oldSearchWords.slice(i + 1)]);
+                }
+            }
+            searchWordsList.push(...newSearchWordsList);
+        }
+    }
+
+    return searchWordsList.map((words) => words.join(" "));
+}
+
+function genSuggestions(searchStr: string, process: any) {
+    const altWordList: { [key: string]: string[] } = {};
+    for (const word of searchStr.split(" ")) {
+        if (cmdAliases[word] !== undefined) {
+            altWordList[word] = cmdAliases[word];
+        }
+    }
+
+    if (altWordList !== {}) {
+        const suggestions: string[] = [];
+
     } else {
         process([]);
     }
@@ -102,7 +123,7 @@ function genFlattenedNodes(nestedNodes: ITreeNode[]): ITreeNode[] {
     return flattenedNodes;
 }
 
-function loadTree(nodes: ITreeNode[], aliases: { [key: string]: string}) {
+function loadTree(nodes: ITreeNode[], aliases: { [key: string]: string[] }) {
     nodeData = nodes;
     cmdAliases = aliases;
     const urlParams = new URLSearchParams(window.location.search);
@@ -140,11 +161,6 @@ function loadTree(nodes: ITreeNode[], aliases: { [key: string]: string}) {
     }
 
     $("#tree-search").on("change keyup mouseup paste", updateSearch);
-    $("#tree-search").typeahead({
-        source: genSuggestions,
-        matcher: (_) => true,
-        highlighter: (item) => item
-    });
 
     window.addEventListener("message", (e) => {
         currentNodeId = e.data.split("/").slice(-1)[0];
