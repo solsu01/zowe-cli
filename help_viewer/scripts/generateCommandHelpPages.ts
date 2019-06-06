@@ -6,19 +6,20 @@ import * as path from "path";
 
 const marked = require("marked");
 
-const iframeHackScript = `<script type="text/javascript">
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get("t") === "1") {
-    var links = document.getElementsByTagName("a");
-    for (var i = 0; i < links.length; i++) {
-        if (links[i].host !== window.location.host) {
-            links[i].setAttribute("target", "_parent");
-        } else {
-            links[i].setAttribute("onclick", "window.parent.postMessage(this.href, '*'); return false;");
-        }
-    }
+const includeScripts = `<link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+<style>
+.btn-xs {
+    padding: .25rem .4rem;
+    font-size: .875rem;
+    line-height: .6;
+    border-radius: .2rem;
 }
-</script>`;
+</style>
+<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../node_modules/clipboard/dist/clipboard.js"></script>
+<script src="../docs.js"></script>
+`;
 
 (async () => {
     process.env.FORCE_COLOR = "0";
@@ -63,15 +64,15 @@ if (urlParams.get("t") === "1") {
             .slice(1) // delete the first line which says ###GROUPS
             .filter((item, pos, self) => self.indexOf(item) === pos)  // remove duplicate lines
             .map((groupLine: string) => {
-                const match = groupLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)?)/i);
+                const match = groupLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)?)\s*[A-Z]/);
                 if (match) {
                     const href = `${match[1].split(" ")[0]}.html`;
-                    return `* <a href="${href}">${match[1]}</a> -` + groupLine.slice(match[0].length).replace(/\.\s*$/, "");
+                    return `\n* <a href="${href}">${match[1]}</a> -` + groupLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
                 }
-                return groupLine;
+                return " " + groupLine.trim().replace(/\.\s*$/, "");
             })
-            .join("\n")}`);
-    rootHelpContent += "</article>" + iframeHackScript;
+            .join("")}`);
+    rootHelpContent += "</article>\n" + includeScripts;
     fs.writeFileSync(rootHelpHtmlPath, rootHelpContent);
 
     function generateBreadcrumb(fullCommandName: string): string {
@@ -112,11 +113,11 @@ if (urlParams.get("t") === "1") {
                         const match = commandLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)?)\s*[A-Z]/);
                         if (match) {
                             const href = `${fullCommandName}_${match[1].split(" ")[0]}.html`;
-                            return `* <a href="${href}">${match[1]}</a> -` + commandLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
+                            return `\n* <a href="${href}">${match[1]}</a> -` + commandLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
                         }
-                        return commandLine;
+                        return " " + commandLine.trim().replace(/\.\s*$/, "");
                     })
-                    .join("\n")}`;
+                    .join("")}`;
         }
 
         const docFilename = (fullCommandName + ".html").trim();
@@ -130,11 +131,10 @@ if (urlParams.get("t") === "1") {
 
         markdownContent = marked(markdownContent);
         markdownContent = markdownContent.replace(/<code>\$(.*?)<\/code>/g,
-            "<code>$1</code> <button class=\"btn\" data-clipboard-text='$1'>Copy</button>");
+            "<code>$1</code> <button class=\"btn btn-secondary btn-xs\" data-clipboard-text='$1'>Copy</button>");
         const helpContent =
             "<link rel=\"stylesheet\" href=\"../css/github.css\" /> <article class=\"markdown-body\">\n"
-            + markdownContent + "</article>" + "<script src=\"../../node_modules/clipboard/dist/clipboard.js\"></script> " +
-            "<script type=\"text/javascript\">new ClipboardJS('.btn');</script>" + iframeHackScript;
+            + markdownContent + "</article>\n" + includeScripts + "<script type=\"text/javascript\">initClipboard();</script>";
         fs.writeFileSync(docPath, helpContent);
 
         console.log(chalk.grey("doc generated to " + docPath));

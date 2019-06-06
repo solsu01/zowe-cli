@@ -15,11 +15,13 @@ interface ITreeNode {
     children: undefined | ITreeNode[];
 }
 
-let rootName: string = null;
+let currentNodeId: string = null;
+let isFlattened: boolean = false;
+let nodeData: ITreeNode[] = [];
 let searchTimeout: number = 0;
 
 function searchTree(searchStr: string, node: any): boolean {
-    if (node.parent === "#") {
+    if ((node.parent === "#") && !isFlattened) {
         return false;  // Don't match root node
     }
 
@@ -28,8 +30,25 @@ function searchTree(searchStr: string, node: any): boolean {
 
     if (matchIndex === - 1) {
         return false;
+    } else if (isFlattened) {
+        return true;
     } else {
         return fullCmd.indexOf(" ", matchIndex + searchStr.length) === -1;
+    }
+}
+
+function selectNode(nodeId: string, alsoExpand: boolean) {
+    currentNodeId = nodeId;
+    $("#cmd-tree").jstree(true).deselect_all();
+    $("#cmd-tree").jstree(true).select_node(nodeId);
+
+    if (alsoExpand) {
+        $("#cmd-tree").jstree(true).open_node(nodeId);
+    }
+
+    const node = document.getElementById(nodeId);
+    if (node !== null) {
+        node.scrollIntoView();
     }
 }
 
@@ -39,25 +58,38 @@ function updateSearch() {
     }
 
     searchTimeout = setTimeout(() => {
-        let searchStr = $("#tree-search-input").val().toString().trim();
+        let searchStr = $("#tree-search").val().toString().trim();
+        const rootName = nodeData[0].text;
 
         if (searchStr.startsWith(`${rootName} `)) {
             searchStr = searchStr.slice(rootName.length).trim();
         }
 
-        if (searchStr.length > 0) {
-            $("#cmd-tree").jstree(true).search(searchStr);
-        }
+        $("#cmd-tree").jstree(true).search(searchStr);
     }, 250);
 }
 
-function updateTree(event) {
-    const nodeId = event.data.split("/").slice(-1)[0];
-    $("#cmd-tree").jstree(true).deselect_all();
-    $("#cmd-tree").jstree(true).select_node(nodeId);
+function genFlattenedNodes(nestedNodes: ITreeNode[]): ITreeNode[] {
+    const flattenedNodes: ITreeNode[] = [];
+    for (const node of nestedNodes) {
+        if (node.children && (node.children.length > 0)) {
+            flattenedNodes.push(...genFlattenedNodes(node.children));
+        } else {
+            const nodeText = node.id.slice(0, -5).replace(/_/g, " ");
+            flattenedNodes.push({
+                id: node.id,
+                text: `${nodeData[0].text} ${nodeText}`,
+                children: []
+            });
+        }
+    }
+    return flattenedNodes;
 }
 
 function loadTree(nodes: ITreeNode[]) {
+    nodeData = nodes;
+    const urlParams = new URLSearchParams(window.location.search);
+
     $("#cmd-tree").jstree({
         core: {
             animation: 0,
@@ -75,17 +107,58 @@ function loadTree(nodes: ITreeNode[]) {
         },
     }).on("changed.jstree", (e, data) => {
         // Change src attribute of iframe when item selected
-        $("#docs-page").attr("src", `cmd_docs/${data.selected[0]}?t=1`);
+        if (data.selected.length > 0) {
+            currentNodeId = data.selected[0];
+            $("#docs-page").attr("src", `cmd_docs/${currentNodeId}?t=1`);
+        }
     }).on("loaded.jstree", () => {
         // Select and expand root node when page loads
-        rootName = nodes[0].text;
-        const urlParams = new URLSearchParams(window.location.search);
         let nodeId = urlParams.get("p");
         nodeId = (nodeId === null) ? nodes[0].id : `${nodeId}.html`;
-        $("#cmd-tree").jstree(true).select_node(nodeId);
-        $("#cmd-tree").jstree(true).toggle_node(nodeId);
+        selectNode(nodeId, true);
     });
 
-    $("#tree-search-input").on("change keyup mouseup paste", updateSearch);
-    window.addEventListener("message", updateTree, false);
+    if (urlParams.get("l") === "1") {
+        toggleTreeView();
+    }
+
+    $("#tree-search").on("change keyup mouseup paste", updateSearch);
+
+    window.addEventListener("message", (e) => {
+        selectNode(e.data.split("/").slice(-1)[0], false);
+    }, false);
+}
+
+function toggleTree(splitter: any) {
+    if ($("#panel-left").is(":visible")) {
+        $("#panel-left").children().hide();
+        $("#panel-left").hide();
+        splitter.setSizes([0, 100]);
+    } else {
+        splitter.setSizes([20, 80]);
+        $("#panel-left").show();
+        $("#panel-left").children().show();
+    }
+}
+
+function toggleTreeView() {
+    isFlattened = !isFlattened;
+    const newNodes = isFlattened ? genFlattenedNodes(nodeData) : nodeData;
+    // @ts-ignore
+    $("#cmd-tree").jstree(true).settings.core.data = newNodes;
+    $("#cmd-tree").jstree(true).refresh(false, true);
+    setTimeout(() => selectNode(currentNodeId, true), 250);
+    const otherViewName = isFlattened ? "Tree View" : "List View";
+    $("#tree-view-toggle").text(`Switch to ${otherViewName}`);
+    $("#tree-expand-all").toggle();
+    $("#tree-collapse-all").toggle();
+}
+
+function expandAll(expanded: boolean) {
+    if (expanded) {
+        $("#cmd-tree").jstree("open_all");
+    } else {
+        $("#cmd-tree").jstree("close_all");
+        $("#cmd-tree").jstree(true).toggle_node(nodeData[0].id);
+    }
 }
