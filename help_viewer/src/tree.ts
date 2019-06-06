@@ -38,6 +38,22 @@ function searchTree(searchStr: string, node: any): boolean {
     }
 }
 
+function genSuggestions(searchStr: string, process: any) {
+    const searchWords: string[] = searchStr.split(" ");
+    for (let i = 0; i < searchWords.length; i++) {
+        if (cmdAliases[searchWords[i]] !== undefined) {
+            searchWords[i] = cmdAliases[searchWords[i]];
+        }
+    }
+
+    const altSearchStr = searchWords.join(" ");
+    if (altSearchStr !== searchStr) {
+        process([altSearchStr]);
+    } else {
+        process([]);
+    }
+}
+
 function selectCurrentNode(alsoExpand: boolean) {
     $("#cmd-tree").jstree(true).deselect_all();
     $("#cmd-tree").jstree(true).select_node(currentNodeId);
@@ -59,19 +75,8 @@ function updateSearch() {
 
     searchTimeout = setTimeout(() => {
         let searchStr = $("#tree-search").val().toString().trim();
-        /*let altSearchStr = searchStr;
-
-        for (const word of searchStr.split(" ")) {
-            if (cmdAliases.word !== undefined) {
-                altSearchStr = altSearchStr.replace(RegExp("(^|\s)" + word + "(\s|$)"), `$1${cmdAliases.word}$2`);
-            }
-        }
-
-        if (altSearchStr !== searchStr) {
-            $("#tree-search")
-        }*/
-
         const rootName = nodeData[0].text;
+
         if (searchStr.startsWith(`${rootName} `)) {
             searchStr = searchStr.slice(rootName.length).trim();
         }
@@ -135,6 +140,11 @@ function loadTree(nodes: ITreeNode[], aliases: { [key: string]: string}) {
     }
 
     $("#tree-search").on("change keyup mouseup paste", updateSearch);
+    $("#tree-search").typeahead({
+        source: genSuggestions,
+        matcher: (_) => true,
+        highlighter: (item) => item
+    });
 
     window.addEventListener("message", (e) => {
         currentNodeId = e.data.split("/").slice(-1)[0];
