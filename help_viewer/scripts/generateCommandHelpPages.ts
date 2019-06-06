@@ -6,17 +6,7 @@ import * as path from "path";
 
 const marked = require("marked");
 
-const includeScripts = `<link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
-<style>
-.btn-xs {
-    padding: .25rem .4rem;
-    font-size: .875rem;
-    line-height: .6;
-    border-radius: .2rem;
-}
-</style>
-<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-<script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-css/balloon.min.css"/>
 <script src="../../node_modules/clipboard/dist/clipboard.js"></script>
 <script src="../docs.js"></script>
 `;
@@ -47,10 +37,11 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/bootstra
         text: Constants.BINARY_NAME,
         children: []
     }];
+    const aliasList: { [key: string]: string } = {};
     const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
 
     let rootHelpContent = marked(Constants.DESCRIPTION);
-    rootHelpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" /><article class=\"markdown-body\">\n<h2>" +
+    rootHelpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" />\n<article class=\"markdown-body\">\n<h2>" +
         "<a href=\"cli_root_help.html\">" + Constants.BINARY_NAME + "</a></h2>\n" + rootHelpContent;
     let helpGen = new DefaultHelpGenerator({
         produceMarkdown: true,
@@ -66,6 +57,12 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/bootstra
             .map((groupLine: string) => {
                 const match = groupLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)?)\s*[A-Z]/);
                 if (match) {
+                    const aliasMatch = groupLine.match(/([a-z-]+)\s\|\s([a-z-]+)/);
+
+                    if (aliasMatch) {
+                        aliasList[aliasMatch[2]] = aliasMatch[1];
+                    }
+
                     const href = `${match[1].split(" ")[0]}.html`;
                     return `\n* <a href="${href}">${match[1]}</a> -` + groupLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
                 }
@@ -112,6 +109,12 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/bootstra
                     .map((commandLine: string) => {
                         const match = commandLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)?)\s*[A-Z]/);
                         if (match) {
+                            const aliasMatch = commandLine.match(/([a-z-]+)\s\|\s([a-z-]+)/);
+
+                            if (aliasMatch) {
+                                aliasList[aliasMatch[2]] = aliasMatch[1];
+                            }
+
                             const href = `${fullCommandName}_${match[1].split(" ")[0]}.html`;
                             return `\n* <a href="${href}">${match[1]}</a> -` + commandLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
                         }
@@ -131,9 +134,9 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/bootstra
 
         markdownContent = marked(markdownContent);
         markdownContent = markdownContent.replace(/<code>\$(.*?)<\/code>/g,
-            "<code>$1</code> <button class=\"btn btn-secondary btn-xs\" data-clipboard-text='$1'>Copy</button>");
+            "<code>$1</code> <button class=\"btn-copy\" data-balloon-pos=\"right\" data-clipboard-text=\"$1\">Copy</button>");
         const helpContent =
-            "<link rel=\"stylesheet\" href=\"../css/github.css\" /> <article class=\"markdown-body\">\n"
+            "<link rel=\"stylesheet\" href=\"../css/github.css\" />\n<article class=\"markdown-body\">\n"
             + markdownContent + "</article>\n" + includeScripts + "<script type=\"text/javascript\">initClipboard();</script>";
         fs.writeFileSync(docPath, helpContent);
 
@@ -166,6 +169,7 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/bootstra
 
 
     console.log(chalk.blue("Generated documentation pages for " + totalCommands + " commands and groups"));
-    fs.writeFileSync(treeFile, "const treeNodes = " + JSON.stringify(rootTreeNode, null, 2) + ";");
+    fs.writeFileSync(treeFile, "const treeNodes = " + JSON.stringify(rootTreeNode, null, 2) + ";\nconst aliasList = " +
+    JSON.stringify(aliasList, null, 2) + ";");
     process.env.FORCE_COLOR = undefined;
 })();

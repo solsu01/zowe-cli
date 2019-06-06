@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="../node_modules/jstree/dist/themes/default/style.min.css"/>
 <link rel="stylesheet" href="./css/main.css"/>
-<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
 <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../node_modules/jstree/dist/jstree.min.js"></script>
 <script src="../node_modules/split.js/dist/split.min.js"></script>
@@ -51,6 +51,6 @@ const splitter = Split(["#panel-left", "#panel-right"], {
     sizes: [20, 80],
     minSize: 0
 });
-loadTree(treeNodes);
+loadTree(treeNodes, aliasList);
 $(".gutter").on("dblclick", () => toggleTree(splitter));
 </script>

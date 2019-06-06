@@ -15,6 +15,7 @@ interface ITreeNode {
     children: undefined | ITreeNode[];
 }
 
+let cmdAliases: { [key: string]: string } = {};
 let currentNodeId: string = null;
 let isFlattened: boolean = false;
 let nodeData: ITreeNode[] = [];
@@ -37,16 +38,15 @@ function searchTree(searchStr: string, node: any): boolean {
     }
 }
 
-function selectNode(nodeId: string, alsoExpand: boolean) {
-    currentNodeId = nodeId;
+function selectCurrentNode(alsoExpand: boolean) {
     $("#cmd-tree").jstree(true).deselect_all();
-    $("#cmd-tree").jstree(true).select_node(nodeId);
+    $("#cmd-tree").jstree(true).select_node(currentNodeId);
 
     if (alsoExpand) {
-        $("#cmd-tree").jstree(true).open_node(nodeId);
+        $("#cmd-tree").jstree(true).open_node(currentNodeId);
     }
 
-    const node = document.getElementById(nodeId);
+    const node = document.getElementById(currentNodeId);
     if (node !== null) {
         node.scrollIntoView();
     }
@@ -59,8 +59,19 @@ function updateSearch() {
 
     searchTimeout = setTimeout(() => {
         let searchStr = $("#tree-search").val().toString().trim();
-        const rootName = nodeData[0].text;
+        /*let altSearchStr = searchStr;
 
+        for (const word of searchStr.split(" ")) {
+            if (cmdAliases.word !== undefined) {
+                altSearchStr = altSearchStr.replace(RegExp("(^|\s)" + word + "(\s|$)"), `$1${cmdAliases.word}$2`);
+            }
+        }
+
+        if (altSearchStr !== searchStr) {
+            $("#tree-search")
+        }*/
+
+        const rootName = nodeData[0].text;
         if (searchStr.startsWith(`${rootName} `)) {
             searchStr = searchStr.slice(rootName.length).trim();
         }
@@ -86,8 +97,9 @@ function genFlattenedNodes(nestedNodes: ITreeNode[]): ITreeNode[] {
     return flattenedNodes;
 }
 
-function loadTree(nodes: ITreeNode[]) {
+function loadTree(nodes: ITreeNode[], aliases: { [key: string]: string}) {
     nodeData = nodes;
+    cmdAliases = aliases;
     const urlParams = new URLSearchParams(window.location.search);
 
     $("#cmd-tree").jstree({
@@ -113,9 +125,9 @@ function loadTree(nodes: ITreeNode[]) {
         }
     }).on("loaded.jstree", () => {
         // Select and expand root node when page loads
-        let nodeId = urlParams.get("p");
-        nodeId = (nodeId === null) ? nodes[0].id : `${nodeId}.html`;
-        selectNode(nodeId, true);
+        const nodeId = urlParams.get("p");
+        currentNodeId = (nodeId === null) ? nodes[0].id : `${nodeId}.html`;
+        selectCurrentNode(true);
     });
 
     if (urlParams.get("l") === "1") {
@@ -125,7 +137,8 @@ function loadTree(nodes: ITreeNode[]) {
     $("#tree-search").on("change keyup mouseup paste", updateSearch);
 
     window.addEventListener("message", (e) => {
-        selectNode(e.data.split("/").slice(-1)[0], false);
+        currentNodeId = e.data.split("/").slice(-1)[0];
+        selectCurrentNode(false);
     }, false);
 }
 
@@ -147,7 +160,7 @@ function toggleTreeView() {
     // @ts-ignore
     $("#cmd-tree").jstree(true).settings.core.data = newNodes;
     $("#cmd-tree").jstree(true).refresh(false, true);
-    setTimeout(() => selectNode(currentNodeId, true), 250);
+    setTimeout(() => selectCurrentNode(true), 250);
     const otherViewName = isFlattened ? "Tree View" : "List View";
     $("#tree-view-toggle").text(`Switch to ${otherViewName}`);
     $("#tree-expand-all").toggle();

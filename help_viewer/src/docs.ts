@@ -12,28 +12,16 @@ if (urlParams.get("t") === "1") {
 }
 
 function setTooltip(btn: any, message: string) {
-    $(btn).tooltip("hide").attr("data-original-title", message).tooltip("show");
-}
-
-function hideTooltip(btn: any) {
-    setTimeout(() => $(btn).tooltip("hide"), 1000);
+    btn.setAttribute("data-balloon", message);
+    btn.setAttribute("data-balloon-visible", "");
+    setTimeout(() => {
+        btn.removeAttribute("data-balloon");
+        btn.removeAttribute("data-balloon-visible");
+    }, 1000);
 }
 
 function initClipboard() {
-    $(".btn").tooltip({
-        trigger: "click",
-        placement: "right"
-    });
-
-    const clipboard = new ClipboardJS(".btn");
-
-    clipboard.on("success", (e) => {
-        setTooltip(e.trigger, "Copied!");
-        hideTooltip(e.trigger);
-    });
-
-    clipboard.on("error", (e) => {
-        setTooltip(e.trigger, "Failed!");
-        hideTooltip(e.trigger);
-    });
+    const clipboard = new ClipboardJS(".btn-copy");
+    clipboard.on("success", (e) => setTooltip(e.trigger, "Copied!"));
+    clipboard.on("error", (e) => setTooltip(e.trigger, "Failed!"));
 }
