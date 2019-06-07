@@ -1,3 +1,14 @@
+/*
+* This program and the accompanying materials are made available under the terms of the
+* Eclipse Public License v2.0 which accompanies this distribution, and is available at
+* https://www.eclipse.org/legal/epl-v20.html
+*
+* SPDX-License-Identifier: EPL-2.0
+*
+* Copyright Contributors to the Zowe Project.
+*
+*/
+
 import { DefaultHelpGenerator, Imperative, ImperativeConfig, IO } from "@zowe/imperative";
 import { Constants } from "../../packages";
 import chalk from "chalk";
@@ -54,7 +65,7 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
             .slice(1) // delete the first line which says ###GROUPS
             .filter((item, pos, self) => self.indexOf(item) === pos)  // remove duplicate lines
             .map((groupLine: string) => {
-                const match = groupLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s*[A-Z]/);
+                const match = groupLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s+[a-z]/i);
                 if (match) {
                     const href = `${match[1].split(" ")[0]}.html`;
                     return `\n* <a href="${href}">${match[1]}</a> -` + groupLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
@@ -100,7 +111,7 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
                 `${helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
                     .slice(1) // delete the first line which says ###COMMANDS
                     .map((commandLine: string) => {
-                        const match = commandLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s*[A-Z]/);
+                        const match = commandLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s+[a-z]/i);
                         if (match) {
                             const href = `${fullCommandName}_${match[1].split(" ")[0]}.html`;
                             return `\n* <a href="${href}">${match[1]}</a> -` + commandLine.slice(match[0].length - 2).replace(/\.\s*$/, "");

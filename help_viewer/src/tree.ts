@@ -168,8 +168,7 @@ function toggleTree(splitter: any) {
 function toggleTreeView() {
     isFlattened = !isFlattened;
     const newNodes = isFlattened ? genFlattenedNodes(treeNodes) : treeNodes;
-    // @ts-ignore
-    $("#cmd-tree").jstree(true).settings.core.data = newNodes;
+    ($("#cmd-tree").jstree(true) as any).settings.core.data = newNodes;
     $("#cmd-tree").jstree(true).refresh(false, true);
     setTimeout(() => selectCurrentNode(true), 250);
     const otherViewName = isFlattened ? "Tree View" : "List View";
