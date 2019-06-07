@@ -8,8 +8,7 @@ const marked = require("marked");
 
 const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-css/balloon.min.css"/>
 <script src="../../node_modules/clipboard/dist/clipboard.js"></script>
-<script src="../docs.js"></script>
-`;
+<script src="../docs.js"></script>`;
 
 (async () => {
     process.env.FORCE_COLOR = "0";
@@ -55,20 +54,8 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
             .slice(1) // delete the first line which says ###GROUPS
             .filter((item, pos, self) => self.indexOf(item) === pos)  // remove duplicate lines
             .map((groupLine: string) => {
-                const match = groupLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)?)\s*[A-Z]/);
+                const match = groupLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s*[A-Z]/);
                 if (match) {
-                    const aliasMatch = groupLine.match(/([a-z-]+)\s\|\s([a-z-]+)/);
-
-                    if (aliasMatch) {
-                        const longName = aliasMatch[1];
-                        const shortName = aliasMatch[2];
-                        if (aliasList[shortName] === undefined) {
-                            aliasList[shortName] = [aliasMatch[1]];
-                        } else if (aliasList[shortName].indexOf(longName) === -1) {
-                            aliasList[shortName].push(longName);
-                        }
-                    }
-
                     const href = `${match[1].split(" ")[0]}.html`;
                     return `\n* <a href="${href}">${match[1]}</a> -` + groupLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
                 }
@@ -113,20 +100,8 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
                 `${helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
                     .slice(1) // delete the first line which says ###COMMANDS
                     .map((commandLine: string) => {
-                        const match = commandLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)?)\s*[A-Z]/);
+                        const match = commandLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s*[A-Z]/);
                         if (match) {
-                            const aliasMatch = commandLine.match(/([a-z-]+)\s\|\s([a-z-]+)/);
-
-                            if (aliasMatch) {
-                                const longName = aliasMatch[1];
-                                const shortName = aliasMatch[2];
-                                if (aliasList[shortName] === undefined) {
-                                    aliasList[shortName] = [aliasMatch[1]];
-                                } else if (aliasList[shortName].indexOf(longName) === -1) {
-                                    aliasList[shortName].push(longName);
-                                }
-                            }
-
                             const href = `${fullCommandName}_${match[1].split(" ")[0]}.html`;
                             return `\n* <a href="${href}">${match[1]}</a> -` + commandLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
                         }
@@ -144,12 +119,22 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
         };
         tree.children.push(treeNode);
 
+        definition.aliases.forEach((alias: string) => {
+            if (alias !== definition.name) {
+                if (aliasList[alias] === undefined) {
+                    aliasList[alias] = [definition.name];
+                } else if (aliasList[alias].indexOf(definition.name) === -1) {
+                    aliasList[alias].push(definition.name);
+                }
+            }
+        });
+
         markdownContent = marked(markdownContent);
         markdownContent = markdownContent.replace(/<code>\$(.*?)<\/code>/g,
             "<code>$1</code> <button class=\"btn-copy\" data-balloon-pos=\"right\" data-clipboard-text=\"$1\">Copy</button>");
         const helpContent =
             "<link rel=\"stylesheet\" href=\"../css/github.css\" />\n<article class=\"markdown-body\">\n"
-            + markdownContent + "</article>\n" + includeScripts + "<script type=\"text/javascript\">initClipboard();</script>";
+            + markdownContent + "</article>\n" + includeScripts;
         fs.writeFileSync(docPath, helpContent);
 
         console.log(chalk.grey("doc generated to " + docPath));

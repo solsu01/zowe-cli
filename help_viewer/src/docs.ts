@@ -20,8 +20,6 @@ function setTooltip(btn: any, message: string) {
     }, 1000);
 }
 
-function initClipboard() {
-    const clipboard = new ClipboardJS(".btn-copy");
-    clipboard.on("success", (e) => setTooltip(e.trigger, "Copied!"));
-    clipboard.on("error", (e) => setTooltip(e.trigger, "Failed!"));
-}
+const clipboard = new ClipboardJS(".btn-copy");
+clipboard.on("success", (e) => setTooltip(e.trigger, "Copied!"));
+clipboard.on("error", (e) => setTooltip(e.trigger, "Failed!"));

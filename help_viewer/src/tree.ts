@@ -15,19 +15,21 @@ interface ITreeNode {
     children: undefined | ITreeNode[];
 }
 
-let cmdAliases: { [key: string]: string[] } = {};
+declare const treeNodes: ITreeNode[];
+declare const aliasList: { [key: string]: string };
+
 let currentNodeId: string = null;
 let isFlattened: boolean = false;
-let nodeData: ITreeNode[] = [];
+let searchStrList: string[] = [];
 let searchTimeout: number = 0;
 
-function searchTree(searchStr: string, node: any): boolean {
+function searchTree(_: string, node: any): boolean {
     if ((node.parent === "#") && !isFlattened) {
         return false;  // Don't match root node
     }
 
     const fullCmd: string = node.id.slice(0, -5).replace(/_/g, " ");
-    for (const newSearchStr of permuteSearchStr(searchStr)) {
+    for (const newSearchStr of searchStrList) {
         const matchIndex: number = fullCmd.indexOf(newSearchStr);
         if (matchIndex !== -1) {
             if (isFlattened || (fullCmd.indexOf(" ", matchIndex + newSearchStr.length) === -1)) {
@@ -45,10 +47,10 @@ function permuteSearchStr(searchStr: string): string[] {
 
     for (let i = 0; i < searchWords.length; i++) {
         const word = searchWords[i];
-        if (cmdAliases[word] !== undefined) {
+        if (aliasList[word] !== undefined) {
             const newSearchWordsList: string[][] = [];
             for (const oldSearchWords of searchWordsList) {
-                for (const alias of cmdAliases[word]) {
+                for (const alias of aliasList[word]) {
                     newSearchWordsList.push([...oldSearchWords.slice(0, i), alias, ...oldSearchWords.slice(i + 1)]);
                 }
             }
@@ -57,22 +59,6 @@ function permuteSearchStr(searchStr: string): string[] {
     }
 
     return searchWordsList.map((words) => words.join(" "));
-}
-
-function genSuggestions(searchStr: string, process: any) {
-    const altWordList: { [key: string]: string[] } = {};
-    for (const word of searchStr.split(" ")) {
-        if (cmdAliases[word] !== undefined) {
-            altWordList[word] = cmdAliases[word];
-        }
-    }
-
-    if (altWordList !== {}) {
-        const suggestions: string[] = [];
-
-    } else {
-        process([]);
-    }
 }
 
 function selectCurrentNode(alsoExpand: boolean) {
@@ -96,12 +82,13 @@ function updateSearch() {
 
     searchTimeout = setTimeout(() => {
         let searchStr = $("#tree-search").val().toString().trim();
-        const rootName = nodeData[0].text;
+        const rootName = treeNodes[0].text;
 
         if (searchStr.startsWith(`${rootName} `)) {
             searchStr = searchStr.slice(rootName.length).trim();
         }
 
+        searchStrList = permuteSearchStr(searchStr);
         $("#cmd-tree").jstree(true).search(searchStr);
     }, 250);
 }
@@ -115,7 +102,7 @@ function genFlattenedNodes(nestedNodes: ITreeNode[]): ITreeNode[] {
             const nodeText = node.id.slice(0, -5).replace(/_/g, " ");
             flattenedNodes.push({
                 id: node.id,
-                text: `${nodeData[0].text} ${nodeText}`,
+                text: `${treeNodes[0].text} ${nodeText}`,
                 children: []
             });
         }
@@ -123,9 +110,7 @@ function genFlattenedNodes(nestedNodes: ITreeNode[]): ITreeNode[] {
     return flattenedNodes;
 }
 
-function loadTree(nodes: ITreeNode[], aliases: { [key: string]: string[] }) {
-    nodeData = nodes;
-    cmdAliases = aliases;
+function loadTree() {
     const urlParams = new URLSearchParams(window.location.search);
 
     $("#cmd-tree").jstree({
@@ -135,7 +120,7 @@ function loadTree(nodes: ITreeNode[], aliases: { [key: string]: string[] }) {
             themes: {
                 icons: false
             },
-            data: nodes
+            data: treeNodes
         },
         plugins: ["search", "wholerow"],
         search: {
@@ -152,7 +137,7 @@ function loadTree(nodes: ITreeNode[], aliases: { [key: string]: string[] }) {
     }).on("loaded.jstree", () => {
         // Select and expand root node when page loads
         const nodeId = urlParams.get("p");
-        currentNodeId = (nodeId === null) ? nodes[0].id : `${nodeId}.html`;
+        currentNodeId = (nodeId === null) ? treeNodes[0].id : `${nodeId}.html`;
         selectCurrentNode(true);
     });
 
@@ -182,7 +167,7 @@ function toggleTree(splitter: any) {
 
 function toggleTreeView() {
     isFlattened = !isFlattened;
-    const newNodes = isFlattened ? genFlattenedNodes(nodeData) : nodeData;
+    const newNodes = isFlattened ? genFlattenedNodes(treeNodes) : treeNodes;
     // @ts-ignore
     $("#cmd-tree").jstree(true).settings.core.data = newNodes;
     $("#cmd-tree").jstree(true).refresh(false, true);
@@ -198,6 +183,6 @@ function expandAll(expanded: boolean) {
         $("#cmd-tree").jstree("open_all");
     } else {
         $("#cmd-tree").jstree("close_all");
-        $("#cmd-tree").jstree(true).toggle_node(nodeData[0].id);
+        $("#cmd-tree").jstree(true).toggle_node(treeNodes[0].id);
     }
 }
