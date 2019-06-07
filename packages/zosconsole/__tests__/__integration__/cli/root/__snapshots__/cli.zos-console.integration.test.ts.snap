@@ -25,7 +25,7 @@ exports[`zos-console should display the help 1`] = `
  ------
 
    collect Collect z/OS console command responses
-   issue   Issue z/OS console commands
+   issue   Issue z/OS console commands           
 
  GLOBAL OPTIONS
  --------------
