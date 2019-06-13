@@ -12,15 +12,17 @@
 import { DefaultHelpGenerator, Imperative, ImperativeConfig, IO } from "@zowe/imperative";
 import { Constants } from "../../packages";
 import * as fs from "fs";
+import * as marked from "marked";
 import * as path from "path";
-
-const marked = require("marked");
 
 interface ITreeNode {
     id: string;
     text: string;
     children: undefined | ITreeNode[];
 }
+
+const treeNodes: ITreeNode[] = [];
+const aliasList: { [key: string]: string[] } = {};
 
 function genDocsHeader(title: string): string {
     return `<!DOCTYPE html>
@@ -50,30 +52,89 @@ const docsFooter = `</article>
 <script src="../docs.js"></script>
 `;
 
-function processChildrenSummaryTables(helpGen: DefaultHelpGenerator): string {
+function processChildrenSummaryTables(helpGen: DefaultHelpGenerator, fullCommandName: string=null): string {
+    const hrefPrefix = fullCommandName ? (fullCommandName + "_") : "";
     return helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
         .slice(1)  // Delete header line
         .map((line: string) => {
             // Wrap group/command names inside links
-            const match = line.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s+[a-z]/i);
+            const match = line.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s+[A-Z]/);
             if (match) {
-                const href = `${match[1].split(" ")[0]}.html`;
+                const href = `${hrefPrefix}${match[1].split(" ")[0]}.html`;
                 return `\n* <a href="${href}">${match[1]}</a> -` + line.slice(match[0].length - 2).replace(/\.\s*$/, "");
             }
             return " " + line.trim().replace(/\.\s*$/, "");
         }).join("");
 }
 
+function genCommandHelpPage(definition: any, fullCommandName: string, docsDir: string, parentNode: ITreeNode) {
+    const rootName: string = treeNodes[0].text;
+    const helpGen = new DefaultHelpGenerator({
+        produceMarkdown: true,
+        rootCommandName: rootName
+    } as any, {
+        commandDefinition: definition,
+        fullCommandTree: Imperative.fullCommandTree
+    });
+
+    let markdownContent = `<h2>` + genBreadcrumb(rootName, fullCommandName) + `</h2>\n`;
+    markdownContent += helpGen.buildHelp() + "\n";
+    // escape <group> and <command> fields
+    markdownContent = markdownContent.replace(/<group>/g, "`<group>`");
+    markdownContent = markdownContent.replace(/<command>/g, "`<command>`");
+    markdownContent = markdownContent.replace(/\\([.-])/g, "$1");
+    markdownContent = markdownContent.replace(/[‘’]/g, "'");
+    if (definition.type === "group") {
+        // this is disabled for the CLIReadme.md but we want to show children here
+        // so we'll call the help generator's children summary function even though
+        // it's usually skipped when producing markdown
+        markdownContent += `<h4>Commands</h4>\n` + processChildrenSummaryTables(helpGen, fullCommandName);
+    }
+
+    let htmlContent = marked(markdownContent);
+    htmlContent = htmlContent.replace(/<code>\$(.*?)<\/code>/g,
+        "<code>$1</code> <button class=\"btn-copy\" data-balloon-pos=\"right\" data-clipboard-text=\"$1\">Copy</button>");
+    htmlContent = genDocsHeader(fullCommandName) + htmlContent + docsFooter;
+
+    const helpHtmlFile = (fullCommandName + ".html").trim();
+    const helpHtmlPath = path.join(docsDir, helpHtmlFile);
+    fs.writeFileSync(helpHtmlPath, htmlContent);
+    console.log("doc generated to " + helpHtmlPath);
+
+    const childNode: ITreeNode = {
+        id: helpHtmlFile,
+        text: [definition.name, ...definition.aliases].join(" | "),
+        children: []
+    };
+    parentNode.children.push(childNode);
+
+    definition.aliases.forEach((alias: string) => {
+        if (alias !== definition.name) {
+            if (aliasList[alias] === undefined) {
+                aliasList[alias] = [definition.name];
+            } else if (aliasList[alias].indexOf(definition.name) === -1) {
+                aliasList[alias].push(definition.name);
+            }
+        }
+    });
+
+    if (definition.children) {
+        definition.children.forEach((child: any) => {
+            genCommandHelpPage(child, `${fullCommandName}_${child.name}`, docsDir, childNode);
+        });
+    }
+}
+
+function writeTreeData() {
+    const treeDataPath = path.join(__dirname, "..", "src", "tree-data.js");
+    fs.writeFileSync(treeDataPath, "const treeNodes = " + JSON.stringify(treeNodes, null, 2) + ";\n" +
+        "const aliasList = " + JSON.stringify(aliasList, null, 2) + ";\n");
+}
+
 (async () => {
-    const baseName: string = Constants.BINARY_NAME;
-    const treeNodes: ITreeNode[] = [];
-    const aliasList: { [key: string]: string[] } = {};
+    const cmdDocsDir = path.join(__dirname, "..", "src", "cmd_docs");
+    IO.createDirsSync(cmdDocsDir);
 
-    const docDir = path.join(__dirname, "..", "src", "cmd_docs");
-    const treeDataFile = path.join(__dirname, "..", "src", "tree-data.js");
-    const rootHelpHtmlPath = path.join(docDir, `${baseName}.html`);
-
-    IO.createDirsSync(docDir);
     // Get all command definitions
     const myConfig = ImperativeConfig.instance;
     // myConfig.callerLocation = __dirname;
@@ -82,20 +143,24 @@ function processChildrenSummaryTables(helpGen: DefaultHelpGenerator): string {
     myConfig.loadedConfig.commandModuleGlobs = ["**/!(__tests__)/cli/*.definition!(.d).*s"];
     // Need to set this for the internal caller location so that the commandModuleGlobs finds the commands
     process.mainModule.filename = __dirname + "/../../package.json";
+    // Initialize Imperative for commands to document
     await Imperative.init(myConfig.loadedConfig);
 
     const uniqueDefinitions = Imperative.fullCommandTree;
     uniqueDefinitions.children = uniqueDefinitions.children
         .sort((a, b) => a.name.localeCompare(b.name))
-        .filter((item, pos, self) => self.indexOf(item) === pos);  // remove duplicate items
+        .filter((item, pos, self) => self.indexOf(item) === pos);  // Remove duplicate items
 
-    treeNodes.push({ id: `${baseName}.html`, text: baseName, children: [] });
-    let rootHelpContent = genDocsHeader(baseName);
-    rootHelpContent += `<h2><a href="${baseName}.html">${baseName}</a></h2>\n`;
+    const rootName: string = Constants.BINARY_NAME;
+    const rootHelpHtmlPath = path.join(cmdDocsDir, `${rootName}.html`);
+    treeNodes.push({ id: `${rootName}.html`, text: rootName, children: [] });
+
+    let rootHelpContent = genDocsHeader(rootName);
+    rootHelpContent += `<h2><a href="${rootName}.html">${rootName}</a></h2>\n`;
     rootHelpContent += marked(Constants.DESCRIPTION) + "\n";
-    let helpGen = new DefaultHelpGenerator({
+    const helpGen = new DefaultHelpGenerator({
         produceMarkdown: true,
-        rootCommandName: baseName
+        rootCommandName: rootName
     } as any, {
         commandDefinition: uniqueDefinitions,
         fullCommandTree: uniqueDefinitions
@@ -104,67 +169,10 @@ function processChildrenSummaryTables(helpGen: DefaultHelpGenerator): string {
     rootHelpContent += docsFooter;
     fs.writeFileSync(rootHelpHtmlPath, rootHelpContent);
 
-    function generateCommandHelpPage(definition: any, fullCommandName: string, tree: any) {
-        let markdownContent = `<h2>` + genBreadcrumb(baseName, fullCommandName) + `</h2>\n`;
-        helpGen = new DefaultHelpGenerator({
-            produceMarkdown: true,
-            rootCommandName: baseName
-        } as any, {
-            commandDefinition: definition,
-            fullCommandTree: Imperative.fullCommandTree
-        });
-        markdownContent += helpGen.buildHelp() + "\n";
-        // escape <group> and <command> fields
-        markdownContent = markdownContent.replace(/<group>/g, "`<group>`");
-        markdownContent = markdownContent.replace(/<command>/g, "`<command>`");
-        markdownContent = markdownContent.replace(/\\([.-])/g, "$1");
-        markdownContent = markdownContent.replace(/[‘’]/g, "'");
-        if (definition.type === "group") {
-            // this is disabled for the CLIReadme.md but we want to show children here
-            // so we'll call the help generator's children summary function even though
-            // it's usually skipped when producing markdown
-            markdownContent += `<h4>Commands</h4>\n` + processChildrenSummaryTables(helpGen);
-        }
-
-        const docFilename = (fullCommandName + ".html").trim();
-        const docPath = path.join(docDir, docFilename);
-        const treeNode: any = {
-            id: docFilename,
-            text: [definition.name, ...definition.aliases].join(" | "),
-            children: []
-        };
-        tree.children.push(treeNode);
-
-        definition.aliases.forEach((alias: string) => {
-            if (alias !== definition.name) {
-                if (aliasList[alias] === undefined) {
-                    aliasList[alias] = [definition.name];
-                } else if (aliasList[alias].indexOf(definition.name) === -1) {
-                    aliasList[alias].push(definition.name);
-                }
-            }
-        });
-
-        markdownContent = marked(markdownContent);
-        markdownContent = markdownContent.replace(/<code>\$(.*?)<\/code>/g,
-            "<code>$1</code> <button class=\"btn-copy\" data-balloon-pos=\"right\" data-clipboard-text=\"$1\">Copy</button>");
-        const helpContent = genDocsHeader(fullCommandName) + markdownContent + docsFooter;
-        fs.writeFileSync(docPath, helpContent);
-
-        console.log("doc generated to " + docPath);
-
-        if (definition.children) {
-            definition.children.forEach((child: any) => {
-                generateCommandHelpPage(child, `${fullCommandName}_${child.name}`, treeNode);
-            });
-        }
-    }
-
     uniqueDefinitions.children.forEach((def) => {
-        generateCommandHelpPage(def, def.name, treeNodes[0]);
+        genCommandHelpPage(def, def.name, cmdDocsDir, treeNodes[0]);
     });
 
     console.log("Generated documentation pages for all commands and groups");
-    fs.writeFileSync(treeDataFile, "const treeNodes = " + JSON.stringify(treeNodes, null, 2) + ";\nconst aliasList = " +
-    JSON.stringify(aliasList, null, 2) + ";\n");
+    writeTreeData();
 })();

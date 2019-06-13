@@ -11,3 +11,7 @@
         padding: 15px;
     }
 }
+
+[data-balloon] {
+    cursor: default !important;
+}

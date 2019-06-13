@@ -16,7 +16,7 @@ if (urlParams.get("e") === "1") {
 
     for (const link of links) {
         if (link.host !== window.location.host) {
-            link.setAttribute("target", "_parent");
+            link.setAttribute("target", "_blank");
         } else {
             link.setAttribute("onclick", "window.parent.postMessage(this.href, '*'); return true;");
         }
