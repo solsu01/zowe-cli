@@ -9,6 +9,10 @@
 *
 */
 
+html, body {
+    height: 100%;
+}
+
 #cmd-tree {
     margin: 0 5px;
     height: calc(100% - 170px);
@@ -68,7 +72,7 @@
     width: calc(100% - 90px);
 }
 
-#tree-view {
+#tree-view-dropdown {
     display: inline;
 }
 

@@ -11,8 +11,9 @@
 
 const urlParams = new URLSearchParams(window.location.search);
 
-if (urlParams.get("t") === "1") {
+if (urlParams.get("e") === "1") {
     const links: any = document.getElementsByTagName("a");
+
     for (const link of links) {
         if (link.host !== window.location.host) {
             link.setAttribute("target", "_parent");

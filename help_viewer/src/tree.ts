@@ -16,7 +16,7 @@ interface ITreeNode {
 }
 
 declare const treeNodes: ITreeNode[];
-declare const aliasList: { [key: string]: string };
+declare const aliasList: { [key: string]: string[] };
 
 let currentNodeId: string = null;
 let isFlattened: boolean = false;
@@ -29,10 +29,10 @@ function searchTree(_: string, node: any): boolean {
     }
 
     const fullCmd: string = node.id.slice(0, -5).replace(/_/g, " ");
-    for (const newSearchStr of searchStrList) {
-        const matchIndex: number = fullCmd.indexOf(newSearchStr);
+    for (const searchStr of searchStrList) {
+        const matchIndex: number = fullCmd.indexOf(searchStr);
         if (matchIndex !== -1) {
-            if (isFlattened || (fullCmd.indexOf(" ", matchIndex + newSearchStr.length) === -1)) {
+            if (isFlattened || (fullCmd.indexOf(" ", matchIndex + searchStr.length) === -1)) {
                 return true;
             }
         }
@@ -47,18 +47,19 @@ function permuteSearchStr(searchStr: string): string[] {
 
     for (let i = 0; i < searchWords.length; i++) {
         const word = searchWords[i];
+
         if (aliasList[word] !== undefined) {
             const newSearchWordsList: string[][] = [];
-            for (const oldSearchWords of searchWordsList) {
-                for (const alias of aliasList[word]) {
+            searchWordsList.forEach((oldSearchWords: string[]) => {
+                aliasList[word].forEach((alias: string) => {
                     newSearchWordsList.push([...oldSearchWords.slice(0, i), alias, ...oldSearchWords.slice(i + 1)]);
-                }
-            }
+                });
+            });
             searchWordsList.push(...newSearchWordsList);
         }
     }
 
-    return searchWordsList.map((words) => words.join(" "));
+    return searchWordsList.map((words: string[]) => words.join(" "));
 }
 
 function selectCurrentNode(alsoExpand: boolean) {
@@ -95,7 +96,8 @@ function updateSearch() {
 
 function genFlattenedNodes(nestedNodes: ITreeNode[]): ITreeNode[] {
     const flattenedNodes: ITreeNode[] = [];
-    for (const node of nestedNodes) {
+
+    nestedNodes.forEach((node: ITreeNode) => {
         if (node.children && (node.children.length > 0)) {
             flattenedNodes.push(...genFlattenedNodes(node.children));
         } else {
@@ -103,10 +105,11 @@ function genFlattenedNodes(nestedNodes: ITreeNode[]): ITreeNode[] {
             flattenedNodes.push({
                 id: node.id,
                 text: `${treeNodes[0].text} ${nodeText}`,
-                children: []
+                children: undefined
             });
         }
-    }
+    });
+
     return flattenedNodes;
 }
 
@@ -132,7 +135,7 @@ function loadTree() {
         // Change src attribute of iframe when item selected
         if (data.selected.length > 0) {
             currentNodeId = data.selected[0];
-            $("#docs-page").attr("src", `cmd_docs/${currentNodeId}?t=1`);
+            $("#docs-page").attr("src", `cmd_docs/${currentNodeId}?e=1`);
         }
     }).on("loaded.jstree", () => {
         // Select and expand root node when page loads

@@ -11,93 +11,109 @@
 
 import { DefaultHelpGenerator, Imperative, ImperativeConfig, IO } from "@zowe/imperative";
 import { Constants } from "../../packages";
-import chalk from "chalk";
 import * as fs from "fs";
 import * as path from "path";
 
 const marked = require("marked");
 
-const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-css/balloon.min.css"/>
+interface ITreeNode {
+    id: string;
+    text: string;
+    children: undefined | ITreeNode[];
+}
+
+function genDocsHeader(title: string): string {
+    return `<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>${title}</title>
+<link rel="stylesheet" href="../../node_modules/github-markdown-css/github-markdown.css">
+<link rel="stylesheet" href="../css/docs.css">
+<article class="markdown-body">
+`;
+}
+
+function genBreadcrumb(baseName: string, fullCommandName: string): string {
+    const crumbs: string[] = [];
+    let hrefPrefix: string = "";
+    [baseName, ...fullCommandName.split("_")].forEach((linkText: string) => {
+        crumbs.push(`<a href="${hrefPrefix}${linkText}.html">${linkText}</a>`);
+        hrefPrefix += `${linkText}_`;
+    });
+    return crumbs.join(" → ");
+}
+
+const docsFooter = `</article>
+<link rel="stylesheet" href="../../node_modules/balloon-css/balloon.min.css">
 <script src="../../node_modules/clipboard/dist/clipboard.js"></script>
-<script src="../docs.js"></script>`;
+<script src="../docs.js"></script>
+`;
+
+function processChildrenSummaryTables(helpGen: DefaultHelpGenerator): string {
+    return helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
+        .slice(1)  // Delete header line
+        .map((line: string) => {
+            // Wrap group/command names inside links
+            const match = line.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s+[a-z]/i);
+            if (match) {
+                const href = `${match[1].split(" ")[0]}.html`;
+                return `\n* <a href="${href}">${match[1]}</a> -` + line.slice(match[0].length - 2).replace(/\.\s*$/, "");
+            }
+            return " " + line.trim().replace(/\.\s*$/, "");
+        }).join("");
+}
 
 (async () => {
-    process.env.FORCE_COLOR = "0";
+    const baseName: string = Constants.BINARY_NAME;
+    const treeNodes: ITreeNode[] = [];
+    const aliasList: { [key: string]: string[] } = {};
+
     const docDir = path.join(__dirname, "..", "src", "cmd_docs");
+    const treeDataFile = path.join(__dirname, "..", "src", "tree-data.js");
+    const rootHelpHtmlPath = path.join(docDir, `${baseName}.html`);
+
     IO.createDirsSync(docDir);
     // Get all command definitions
     const myConfig = ImperativeConfig.instance;
     // myConfig.callerLocation = __dirname;
     myConfig.loadedConfig = require("../../packages/imperative");
-
     // Need to avoid any .definition file inside of __tests__ folders
     myConfig.loadedConfig.commandModuleGlobs = ["**/!(__tests__)/cli/*.definition!(.d).*s"];
-
     // Need to set this for the internal caller location so that the commandModuleGlobs finds the commands
     process.mainModule.filename = __dirname + "/../../package.json";
-
     await Imperative.init(myConfig.loadedConfig);
-    const loadedDefinitions = Imperative.fullCommandTree;
 
-    let totalCommands = 0;
-    const rootHelpHtmlPath = path.join(docDir, "cli_root_help.html");
+    const uniqueDefinitions = Imperative.fullCommandTree;
+    uniqueDefinitions.children = uniqueDefinitions.children
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .filter((item, pos, self) => self.indexOf(item) === pos);  // remove duplicate items
 
-    const rootTreeNode: any = [{
-        id: "cli_root_help.html",
-        text: Constants.BINARY_NAME,
-        children: []
-    }];
-    const aliasList: { [key: string]: string[] } = {};
-    const treeFile = path.join(__dirname, "..", "src", "tree-nodes.js");
-
-    let rootHelpContent = marked(Constants.DESCRIPTION);
-    rootHelpContent = "<link rel=\"stylesheet\" href=\"../css/github.css\" />\n<article class=\"markdown-body\">\n<h2>" +
-        "<a href=\"cli_root_help.html\">" + Constants.BINARY_NAME + "</a></h2>\n" + rootHelpContent;
+    treeNodes.push({ id: `${baseName}.html`, text: baseName, children: [] });
+    let rootHelpContent = genDocsHeader(baseName);
+    rootHelpContent += `<h2><a href="${baseName}.html">${baseName}</a></h2>\n`;
+    rootHelpContent += marked(Constants.DESCRIPTION) + "\n";
     let helpGen = new DefaultHelpGenerator({
         produceMarkdown: true,
-        rootCommandName: Constants.BINARY_NAME
+        rootCommandName: baseName
     } as any, {
-        commandDefinition: loadedDefinitions,
-        fullCommandTree: loadedDefinitions
+        commandDefinition: uniqueDefinitions,
+        fullCommandTree: uniqueDefinitions
     });
-    rootHelpContent += marked(`\n<h4>Groups</h4>\n` +
-        `${helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
-            .slice(1) // delete the first line which says ###GROUPS
-            .filter((item, pos, self) => self.indexOf(item) === pos)  // remove duplicate lines
-            .map((groupLine: string) => {
-                const match = groupLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s+[a-z]/i);
-                if (match) {
-                    const href = `${match[1].split(" ")[0]}.html`;
-                    return `\n* <a href="${href}">${match[1]}</a> -` + groupLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
-                }
-                return " " + groupLine.trim().replace(/\.\s*$/, "");
-            })
-            .join("")}`);
-    rootHelpContent += "</article>\n" + includeScripts;
+    rootHelpContent += marked(`<h4>Groups</h4>\n` + processChildrenSummaryTables(helpGen));
+    rootHelpContent += docsFooter;
     fs.writeFileSync(rootHelpHtmlPath, rootHelpContent);
 
-    function generateBreadcrumb(fullCommandName: string): string {
-        const crumbs: string[] = [];
-        crumbs.push(`<a href="cli_root_help.html">${Constants.BINARY_NAME}</a>`);
-        let hrefPrefix: string = "";
-        fullCommandName.split("_").forEach((linkText: string) => {
-            crumbs.push(`<a href="${hrefPrefix}${linkText}.html">${linkText}</a>`);
-            hrefPrefix += `${linkText}_`;
-        });
-        return crumbs.join(" -> ");
-    }
-
     function generateCommandHelpPage(definition: any, fullCommandName: string, tree: any) {
-        totalCommands++;
-        let markdownContent = `<h2>` + generateBreadcrumb(fullCommandName) + `</h2>\n`;
+        let markdownContent = `<h2>` + genBreadcrumb(baseName, fullCommandName) + `</h2>\n`;
         helpGen = new DefaultHelpGenerator({
             produceMarkdown: true,
-            rootCommandName: Constants.BINARY_NAME
+            rootCommandName: baseName
         } as any, {
             commandDefinition: definition,
-            fullCommandTree: loadedDefinitions
+            fullCommandTree: Imperative.fullCommandTree
         });
-        markdownContent += helpGen.buildHelp();
+        markdownContent += helpGen.buildHelp() + "\n";
         // escape <group> and <command> fields
         markdownContent = markdownContent.replace(/<group>/g, "`<group>`");
         markdownContent = markdownContent.replace(/<command>/g, "`<command>`");
@@ -107,18 +123,7 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
             // this is disabled for the CLIReadme.md but we want to show children here
             // so we'll call the help generator's children summary function even though
             // it's usually skipped when producing markdown
-            markdownContent += `\n<h4>Commands</h4>\n` +
-                `${helpGen.buildChildrenSummaryTables().split(/\r?\n/g)
-                    .slice(1) // delete the first line which says ###COMMANDS
-                    .map((commandLine: string) => {
-                        const match = commandLine.match(/^\s*([a-z-]+(?:\s\|\s[a-z-]+)*)\s+[a-z]/i);
-                        if (match) {
-                            const href = `${fullCommandName}_${match[1].split(" ")[0]}.html`;
-                            return `\n* <a href="${href}">${match[1]}</a> -` + commandLine.slice(match[0].length - 2).replace(/\.\s*$/, "");
-                        }
-                        return " " + commandLine.trim().replace(/\.\s*$/, "");
-                    })
-                    .join("")}`;
+            markdownContent += `<h4>Commands</h4>\n` + processChildrenSummaryTables(helpGen);
         }
 
         const docFilename = (fullCommandName + ".html").trim();
@@ -143,41 +148,23 @@ const includeScripts = `<link rel="stylesheet" href="../../node_modules/balloon-
         markdownContent = marked(markdownContent);
         markdownContent = markdownContent.replace(/<code>\$(.*?)<\/code>/g,
             "<code>$1</code> <button class=\"btn-copy\" data-balloon-pos=\"right\" data-clipboard-text=\"$1\">Copy</button>");
-        const helpContent =
-            "<link rel=\"stylesheet\" href=\"../css/github.css\" />\n<article class=\"markdown-body\">\n"
-            + markdownContent + "</article>\n" + includeScripts;
+        const helpContent = genDocsHeader(fullCommandName) + markdownContent + docsFooter;
         fs.writeFileSync(docPath, helpContent);
 
-        console.log(chalk.grey("doc generated to " + docPath));
+        console.log("doc generated to " + docPath);
 
         if (definition.children) {
-            for (const child of definition.children) {
-
-                generateCommandHelpPage(child, fullCommandName + "_" + child.name, treeNode);
-            }
+            definition.children.forEach((child: any) => {
+                generateCommandHelpPage(child, `${fullCommandName}_${child.name}`, treeNode);
+            });
         }
     }
 
-// --------------------------------------------------------
-// Remove duplicates from Imperative.fullCommandTree
-    const allDefSoFar: string[] = [];
-    const definitionsArray = loadedDefinitions.children.sort((a, b) => a.name.localeCompare(b.name))
-        .filter((cmdDef) => {
-            if (allDefSoFar.indexOf(cmdDef.name) === -1) {
-                allDefSoFar.push(cmdDef.name);
-                return true;
-            }
-            return false;
-        });
-// --------------------------------------------------------
+    uniqueDefinitions.children.forEach((def) => {
+        generateCommandHelpPage(def, def.name, treeNodes[0]);
+    });
 
-    for (const def of definitionsArray) {
-        generateCommandHelpPage(def, def.name, rootTreeNode[0]);
-    }
-
-
-    console.log(chalk.blue("Generated documentation pages for " + totalCommands + " commands and groups"));
-    fs.writeFileSync(treeFile, "const treeNodes = " + JSON.stringify(rootTreeNode, null, 2) + ";\nconst aliasList = " +
-    JSON.stringify(aliasList, null, 2) + ";");
-    process.env.FORCE_COLOR = undefined;
+    console.log("Generated documentation pages for all commands and groups");
+    fs.writeFileSync(treeDataFile, "const treeNodes = " + JSON.stringify(treeNodes, null, 2) + ";\nconst aliasList = " +
+    JSON.stringify(aliasList, null, 2) + ";\n");
 })();
