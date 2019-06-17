@@ -48,3 +48,4 @@ Thumbs.db
 /src/*.js
 /src/*.js.map
 /src/cmd_docs
+/src/metadata.json

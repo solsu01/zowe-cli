@@ -17,6 +17,8 @@ interface ITreeNode {
 
 declare const treeNodes: ITreeNode[];
 declare const aliasList: { [key: string]: string[] };
+declare const headerStr: string;
+declare const footerStr: string;
 
 let currentNodeId: string = null;
 let isFlattened: boolean = false;
@@ -115,6 +117,8 @@ function genFlattenedNodes(nestedNodes: ITreeNode[]): ITreeNode[] {
 
 function loadTree() {
     const urlParams = new URLSearchParams(window.location.search);
+    $("#header-text").text(headerStr);
+    $("#footer").text(footerStr);
 
     $("#cmd-tree").jstree({
         core: {
