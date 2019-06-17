@@ -462,7 +462,7 @@ z/OSMF Profile
       by using the name on commands that support the "\-\-zosmf\-profile"
       option\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -535,7 +535,7 @@ z/OS TSO/E User Profile
 	* Specifies the name of the new tso profile\. You can load this profile by
       using the name on commands that support the "\-\-tso\-profile" option\.
 
-#### TSO ADDRESS SPACE OPTIONS
+#### TSO Address Space Options
 
 *   `--account`  | `-a` *(string)*
 
@@ -612,7 +612,7 @@ z/OS SSH Profile
 	* Specifies the name of the new ssh profile\. You can load this profile by
       using the name on commands that support the "\-\-ssh\-profile" option\.
 
-#### z/OS Ssh Connection Options
+#### z/OS SSH Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -671,7 +671,7 @@ authentication:
       * `$  zowe profiles create ssh-profile ssh333 --host sshhost --user ibmuser --priavetKey /path/to/privatekey --keyPassphrase privateKeyPassphrase`
 
 ## update | upd<a name="module-update"></a>
-Update a  profile.You can update any property present within the profile configuration. The updated profile  will be printed so that you can review the result of the updates.
+Update a  profile. You can update any property present within the profile configuration. The updated profile will be printed so that you can review the result of the updates.
 ### zosmf-profile<a name="command-zosmf-profile"></a>
 z/OSMF Profile
 
@@ -687,7 +687,7 @@ z/OSMF Profile
       by using the name on commands that support the "\-\-zosmf\-profile"
       option\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -738,7 +738,7 @@ z/OS TSO/E User Profile
 	* Specifies the name of the new tso profile\. You can load this profile by
       using the name on commands that support the "\-\-tso\-profile" option\.
 
-#### TSO ADDRESS SPACE OPTIONS
+#### TSO Address Space Options
 
 *   `--account`  | `-a` *(string)*
 
@@ -791,7 +791,7 @@ z/OS SSH Profile
 	* Specifies the name of the new ssh profile\. You can load this profile by
       using the name on commands that support the "\-\-ssh\-profile" option\.
 
-#### z/OS Ssh Connection Options
+#### z/OS SSH Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1101,7 +1101,7 @@ List details about a template published with z/OSMF Cloud Provisioning\.
 	* Display detailed information about published z/OSMF service catalog
       template (summary information is printed by default)\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1161,7 +1161,7 @@ Lists the z/OSMF service catalog published templates\.
 	* Display information about published z/OSMF service catalog templates
       (summary information is printed by default)\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1237,7 +1237,7 @@ List details about an instance provisioned with z/OSMF\.
 
       Allowed values: extended, summary, vars, actions, full
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1302,7 +1302,7 @@ List a set of variables and their values for a given name\.
 
 	* Provisioned Instance Name
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1342,7 +1342,7 @@ List a set of variables and their values for a given name\.
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -1412,7 +1412,7 @@ List the provisioned instances from the z/OSMF software registry\.
 	* Display a list of all types for provisioned instances (e\.g\. DB2 or
       CICS)\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1522,7 +1522,7 @@ catalog\-templates command\.
       allowed\.If the field is provided it is validated\.
       e\.g: "SYSNAME1,SYSNAME2"\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1593,7 +1593,7 @@ instance\-info <name>" command to view the available instance actions\.
 	* The action name\. Use the "zowe provisioning list instance\-info <name>"
       command to view available instance actions\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1655,7 +1655,7 @@ Deletes selected deprovisioned instance\.
 
 	* Deprovisioned Instance name\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1750,7 +1750,7 @@ command responses\.
 
       Allowed values: ^\[a\-zA\-Z0\-9\]\+$
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -1900,7 +1900,7 @@ interval\.
 
       Default value: 1
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -2033,7 +2033,7 @@ Create physical sequential data sets (PS)
 	* The volume serial (VOLSER) on which you want the data set to be placed\.
       A VOLSER is analogous to a drive name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -2163,7 +2163,7 @@ Create partitioned data sets (PDS)
 	* The volume serial (VOLSER) on which you want the data set to be placed\.
       A VOLSER is analogous to a drive name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -2292,7 +2292,7 @@ Create executable data sets
 	* The volume serial (VOLSER) on which you want the data set to be placed\.
       A VOLSER is analogous to a drive name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -2422,7 +2422,7 @@ Create data sets for C code programming
 	* The volume serial (VOLSER) on which you want the data set to be placed\.
       A VOLSER is analogous to a drive name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -2551,7 +2551,7 @@ Create classic data sets (JCL, HLASM, CBL, etc\.\.\.)
 	* The volume serial (VOLSER) on which you want the data set to be placed\.
       A VOLSER is analogous to a drive name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -2676,7 +2676,7 @@ Create a VSAM cluster
       with a space\. You must specify the volumes option when your cluster is
       not SMS\-managed\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -2764,7 +2764,7 @@ Delete a data set permanently
 	* The volume serial (VOLSER) where the data set resides\. The option is
       required only when the data set is not catalogued on the system\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -2843,7 +2843,7 @@ Delete a VSAM cluster permanently
 	* Specify this option to confirm that you want to delete the VSAM cluster
       permanently\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -2930,7 +2930,7 @@ Delete a Unix Systems Services (USS) File or directory permanently
 
 	* Delete directories recursively\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3006,7 +3006,7 @@ Method Services Commands'\.
 	* The IDCAMS control statement that you want to submit\. Zowe CLI attempts
       to split the inline control statement at 255 characters\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3076,7 +3076,7 @@ Method Services Commands'\.
       your file does not contain statements that are longer than 255
       characters (maximum allowed length)\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3165,7 +3165,7 @@ Download content from a z/OS data set to a local file
       set is not cataloged on the system\. A VOLSER is analogous to a drive
       name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3268,7 +3268,7 @@ Download all members from a partitioned data set to a local folder
       set is not cataloged on the system\. A VOLSER is analogous to a drive
       name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3347,7 +3347,7 @@ Download content from a USS file to a local file on your PC
       you omit the option, the command generates a file name automatically for
       you\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3431,7 +3431,7 @@ Options section of this help text\.
       return\. Skip this parameter to return all items\. If you specify an
       incorrect value, the parameter returns up to 1000 items\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3515,7 +3515,7 @@ List data sets that match a pattern in the data set name
       return\. Skip this parameter to return all items\. If you specify an
       incorrect value, the parameter returns up to 1000 items\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3599,7 +3599,7 @@ List USS files and directories in a UNIX file path
       return\. Skip this parameter to return all items\. If you specify an
       incorrect value, the parameter returns up to 1000 items\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3639,7 +3639,7 @@ List USS files and directories in a UNIX file path
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -3734,7 +3734,7 @@ Upload the contents of a file to a z/OS data set
       set is not cataloged on the system\. A VOLSER is analogous to a drive
       name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3827,7 +3827,7 @@ Upload the content of a stdin to a z/OS data set
       set is not cataloged on the system\. A VOLSER is analogous to a drive
       name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -3925,7 +3925,7 @@ Upload files from a local directory to a partitioned data set (PDS)
       set is not cataloged on the system\. A VOLSER is analogous to a drive
       name on a PC\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4002,7 +4002,7 @@ Upload content to a USS file from local file
       performed\. The data transfer process returns each record as\-is,
       without translation\. No delimiters are added between records\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4151,7 +4151,7 @@ nested directories are ignored\.
 
       Default value: 1
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4268,7 +4268,7 @@ see the z/OSMF Jobs API REST documentation\.
 
 	* A file extension to save the job output with\. Default is '\.txt'\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4308,7 +4308,7 @@ see the z/OSMF Jobs API REST documentation\.
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -4390,7 +4390,7 @@ documentation\.
 
 	* A file extension to save the job output with
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4430,7 +4430,7 @@ documentation\.
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -4507,7 +4507,7 @@ downloaded to its own file in the directory\.
       directory rather than creating a subdirectory named after the ID of the
       job\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4573,7 +4573,7 @@ found")\.
 	* The z/OS JOBID of the job you want to view\. No prevalidation of the
       JOBID is performed\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4613,7 +4613,7 @@ found")\.
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -4684,7 +4684,7 @@ presents errors verbatim from the z/OSMF Jobs REST endpoints\.
       zos\-jobs list spool\-files\-by\-jobid" command to obtain spool ID
       numbers\.No pre\-validation of the ID is performed\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4749,7 +4749,7 @@ command presents errors verbatim from the z/OSMF Jobs REST endpoints\.
 	* The z/OS JOBID of the job with the spool files you want to list\. No
       pre\-validation of the JOBID is performed\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4789,7 +4789,7 @@ command presents errors verbatim from the z/OSMF Jobs REST endpoints\.
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -4859,7 +4859,7 @@ command surfaces errors verbatim from the z/OSMF Jobs REST endpoints\.
       the z/OSMF Jobs REST endpoint documentation, which is usually in the
       form "JOB\*"\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -4899,7 +4899,7 @@ command surfaces errors verbatim from the z/OSMF Jobs REST endpoints\.
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -4971,7 +4971,7 @@ Delete a single job by job ID
       ID\. Note: z/OS allows you to abbreviate the job ID if desired\. You can
       use, for example "J123"\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5035,7 +5035,7 @@ Cancel a single job by job ID
       ID\. Note: z/OS allows you to abbreviate the job ID if desired\. You can
       use, for example "J123"\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5106,7 +5106,7 @@ and received a token (a\.k\.a 'servlet\-key')\.
 	* The data to which we want to send to the TSO address space represented
       by the servlet key\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5164,7 +5164,7 @@ termination)\.
 
    zowe zos-tso start address-space [options]
 
-#### TSO ADDRESS SPACE OPTIONS
+#### TSO Address Space Options
 
 *   `--account`  | `-a` *(string)*
 
@@ -5214,7 +5214,7 @@ termination)\.
 
 	* Specify this option to print only the servlet key
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5290,7 +5290,7 @@ a token (a\.k\.a 'servlet\-key')\.
 
 	* The servlet key from a previously started TSO address space\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5353,7 +5353,7 @@ a token (a\.k\.a 'servlet\-key')\.
 
 	* The servlet key from a previously started TSO address space\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5424,7 +5424,7 @@ the user up to (but not including) the TSO 'READY' prompt\.
 
 	* Suppress console messages from start of address space\.
 
-#### TSO ADDRESS SPACE OPTIONS
+#### TSO Address Space Options
 
 *   `--account`  | `-a` *(string)*
 
@@ -5468,7 +5468,7 @@ the user up to (but not including) the TSO 'READY' prompt\.
 
       Default value: 24
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5542,7 +5542,7 @@ Issue a z/OS USS command
 
 	* Working directory in which to execute the command
 
-#### z/OS Ssh Connection Options
+#### z/OS SSH Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5655,7 +5655,7 @@ Create a z/OSMF workflow on a z/OS system using a Data set
 
 	* Replaces an existing workflow with a new workflow\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5695,7 +5695,7 @@ Create a z/OSMF workflow on a z/OS system using a Data set
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -5824,7 +5824,7 @@ Create a workflow instance in z/OSMF using a USS file
 
 	* Replaces an existing workflow with a new workflow\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -5864,7 +5864,7 @@ Create a workflow instance in z/OSMF using a USS file
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -6003,7 +6003,7 @@ Create a z/OSMF workflow on a z/OS system using a Local file
 	* Avoid deletion the uploaded files in /tmp or another specified directory
       after successful execution\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6043,7 +6043,7 @@ Create a z/OSMF workflow on a z/OS system using a Local file
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -6127,7 +6127,7 @@ step\.
 
 	* Identifies whether to wait for workflow instance to finish\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6234,7 +6234,7 @@ specified by \-\-perform\-following\-steps option\.
 	* Identifies whether to perform also following steps in the workflow
       instance\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6341,7 +6341,7 @@ Omitting all options will list all workflows on the sysplex
       Allowed values: in\-progress, complete, automation\-in\-progress,
       canceled
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6381,7 +6381,7 @@ Omitting all options will list all workflows on the sysplex
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -6467,7 +6467,7 @@ Get the details of an active z/OSMF workflow
 
 	* Optional parameter that skips the default workflow summary\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6544,7 +6544,7 @@ system\.
 
 	* Optional parameter for listing variables and their properties\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6605,7 +6605,7 @@ List the archived z/OSMF workflows for a system or sysplex\.
 
    zowe zos-workflows list archived-workflows [options]
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6645,7 +6645,7 @@ List the archived z/OSMF workflows for a system or sysplex\.
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -6701,7 +6701,7 @@ Archive an active workflow instance in z/OSMF\.
 
 	* The workflow key of the workflow to be archived\.
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6741,7 +6741,7 @@ Archive an active workflow instance in z/OSMF\.
 
 	* The name of a (zosmf) profile to load for this command execution\.
 
-#### response format options
+#### Response Format Options
 
 *   `--response-format-filter`  | `--rff` *(array)*
 
@@ -6809,7 +6809,7 @@ Delete an active workflow instance in z/OSMF
 
 	* Delete active workflow by specified workflow name
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6878,7 +6878,7 @@ Delete an archived workflow from z/OSMF
 
 	* Delete an archived workflow by specified workflow name
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -6944,7 +6944,7 @@ hostname, and installed plug\-ins\.
 
    zowe zosmf check status [options]
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 
@@ -7010,7 +7010,7 @@ Obtain a list of systems that are defined to a z/OSMF instance\.
 
    zowe zosmf list systems [options]
 
-#### Zosmf Connection Options
+#### z/OSMF Connection Options
 
 *   `--host`  | `-H` *(string)*
 

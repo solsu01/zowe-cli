@@ -11,7 +11,7 @@
 
 import { ICommandOptionDefinition } from "@zowe/imperative";
 
-export const TSO_OPTION_GROUP: string = "TSO ADDRESS SPACE OPTIONS";
+export const TSO_OPTION_GROUP: string = "TSO Address Space Options";
 
 export const TSO_OPTION_ACCOUNT: ICommandOptionDefinition = {
     name: "account",

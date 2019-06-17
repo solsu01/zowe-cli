@@ -17,7 +17,7 @@ import { ICommandArguments, ICommandOptionDefinition, IProfile, Logger, Session 
  */
 export class ZosmfSession {
 
-    public static ZOSMF_CONNECTION_OPTION_GROUP = "Zosmf Connection Options";
+    public static ZOSMF_CONNECTION_OPTION_GROUP = "z/OSMF Connection Options";
 
     /**
      * Option used in profile creation and commands for hostname for z/OSMF

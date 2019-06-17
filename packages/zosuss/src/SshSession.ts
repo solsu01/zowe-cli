@@ -37,7 +37,7 @@ export class SshSession {
         return this.mISshSession;
     }
 
-    public static SSH_CONNECTION_OPTION_GROUP = "z/OS Ssh Connection Options";
+    public static SSH_CONNECTION_OPTION_GROUP = "z/OS SSH Connection Options";
 
     /**
      * Option used in profile creation and commands for hostname for z/OS SSH
