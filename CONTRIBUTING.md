@@ -116,6 +116,9 @@ We use [gulp](https://gulpjs.com/) for build tasks, to invoke the linter, genera
 
 Use build tasks to enforce rules where possible.
 
+## UX Guidelines and Best Practices for Plug-ins
+https://github.com/zowe/zowe-cli/blob/conformance/docs/CommandFormatStandards.md#the-lost-group-problem-for-command-structure
+
 ## Documentation Guidelines
 
 Open an issue in the [docs-site repository](https://github.com/zowe/docs-site) if you need assistance with the following tasks:
