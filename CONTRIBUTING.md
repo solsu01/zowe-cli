@@ -15,6 +15,7 @@ For "must-have" criteria specific to the Zowe Conformance Program, see [CLI Conf
   - [Testing Guidelines](#testing-guidelines)
   - [Profile Guidelines](#profile-guidelines)
   - [Build Process Guidelines](#build-process-guidelines)
+  - [UX Guidelines and Best Practices for Plug-ins](#UX-Guidelines-and-Best-Practices-for-Plug-ins)
   - [Documentation Guidelines](#documentation-guidelines)
   - [More Information](#more-information)
 
