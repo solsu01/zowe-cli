@@ -9,7 +9,7 @@
 *
 */
 
-import { ICommandDefinition, ICommandOptionDefinition } from "@zowe/imperative";
+import { ICommandDefinition } from "@zowe/imperative";
 
 export const StdinDefinition: ICommandDefinition = {
     name: "stdin",
@@ -20,7 +20,7 @@ export const StdinDefinition: ICommandDefinition = {
         "The command presents errors verbatim from the z/OSMF Jobs REST endpoints. " +
         "For more information about z/OSMF Jobs API errors, see the z/OSMF Jobs API REST documentation.",
     handler: __dirname + "/../Submit.shared.handler",
-    options: ([
+    options: [
         {
             name: "view-all-spool-content", aliases: ["vasc"],
             description: "Print all spool output." +
@@ -48,9 +48,24 @@ export const StdinDefinition: ICommandDefinition = {
         {
             name: "extension", aliases: ["e"],
             description: "A file extension to save the job output with. Default is '.txt'.",
+            implies: ["directory"],
             type: "string"
         },
-    ] as ICommandOptionDefinition[]),
+        {
+            name: "max-attempts", aliases: ["ma"],
+            description: "Maximum number of attempts to check the status of the job.",
+            type: "number",
+            defaultValue: Infinity,
+            impliesOneOf: ["wait-for-output", "wait-for-active", "view-all-spool-content", "directory"]
+        },
+        {
+            name: "watch-delay", aliases: ["wd"],
+            description: "Delay in milliseconds between polls to check the status of the job.",
+            type: "number",
+            defaultValue: 3000,
+            impliesOneOf: ["wait-for-output", "wait-for-active", "view-all-spool-content", "directory"]
+        }
+    ],
     profile: {
         optional: ["zosmf"]
     },

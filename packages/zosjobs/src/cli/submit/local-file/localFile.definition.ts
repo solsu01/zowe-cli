@@ -9,8 +9,7 @@
 *
 */
 
-import { ICommandDefinition, ICommandOptionDefinition } from "@zowe/imperative";
-import { ZosmfSession } from "../../../../../zosmf";
+import { ICommandDefinition } from "@zowe/imperative";
 
 export const LocalFileDefinition: ICommandDefinition = {
     name: "local-file",
@@ -29,7 +28,7 @@ export const LocalFileDefinition: ICommandDefinition = {
             required: true
         }
     ],
-    options: ([
+    options: [
         {
             name: "view-all-spool-content", aliases: ["vasc"],
             description: "Print all spool output." +
@@ -57,9 +56,24 @@ export const LocalFileDefinition: ICommandDefinition = {
         {
             name: "extension", aliases: ["e"],
             description: "A file extension to save the job output with. Default is '.txt'.",
+            implies: ["directory"],
             type: "string"
         },
-    ]as ICommandOptionDefinition[]),
+        {
+            name: "max-attempts", aliases: ["ma"],
+            description: "Maximum number of attempts to check the status of the job.",
+            type: "number",
+            defaultValue: Infinity,
+            impliesOneOf: ["wait-for-output", "wait-for-active", "view-all-spool-content", "directory"]
+        },
+        {
+            name: "watch-delay", aliases: ["wd"],
+            description: "Delay in milliseconds between polls to check the status of the job.",
+            type: "number",
+            defaultValue: 3000,
+            impliesOneOf: ["wait-for-output", "wait-for-active", "view-all-spool-content", "directory"]
+        }
+    ],
     profile: {
         optional: ["zosmf"]
     },

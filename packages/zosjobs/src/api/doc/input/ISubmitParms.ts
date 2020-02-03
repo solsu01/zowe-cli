@@ -59,6 +59,16 @@ export interface ISubmitParms {
     volume?: string;
 
     /**
+     * Maximum number of attempts to check the status of the job
+     */
+    maxAttempts?: number;
+
+    /**
+     * Delay in milliseconds between polls to check the status of the job
+     */
+    watchDelay?: number;
+
+    /**
      * Task status object used by CLI handlers to create progress bars
      * for certain job submit requests
      * Optional

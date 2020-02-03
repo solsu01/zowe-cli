@@ -9,8 +9,7 @@
 *
 */
 
-import { ICommandDefinition, ICommandOptionDefinition } from "@zowe/imperative";
-import { ZosmfSession } from "../../../../../zosmf";
+import { ICommandDefinition } from "@zowe/imperative";
 
 export const DataSetDefinition: ICommandDefinition = {
     name: "data-set",
@@ -32,12 +31,18 @@ export const DataSetDefinition: ICommandDefinition = {
             required: true
         }
     ],
-    options: ([
+    options: [
         {
             name: "volume", aliases: ["vol"],
             description: "The volume serial (VOLSER) where the data set resides. The option is required only when the data set is not" +
                 " catalogued on the system.",
             type: "string"
+        },
+        {
+            name: "view-all-spool-content", aliases: ["vasc"],
+            description: "Print all spool output." +
+                " If you use this option you will wait the job to complete.",
+            type: "boolean"
         },
         {
             name: "wait-for-output", aliases: ["wfo"],
@@ -51,12 +56,6 @@ export const DataSetDefinition: ICommandDefinition = {
             conflictsWith: ["wait-for-output", "view-all-spool-content", "directory"]
         },
         {
-            name: "view-all-spool-content", aliases: ["vasc"],
-            description: "Print all spool output." +
-                " If you use this option you will wait the job to complete.",
-            type: "boolean"
-        },
-        {
             name: "directory", aliases: ["d"],
             description: "The local directory you would like to download the output of the job." +
                 " Creates a subdirectory using the jobID as the name and files are titled based on DD names." +
@@ -68,8 +67,22 @@ export const DataSetDefinition: ICommandDefinition = {
             description: "A file extension to save the job output with. Default is '.txt'.",
             implies: ["directory"],
             type: "string"
+        },
+        {
+            name: "max-attempts", aliases: ["ma"],
+            description: "Maximum number of attempts to check the status of the job.",
+            type: "number",
+            defaultValue: Infinity,
+            impliesOneOf: ["wait-for-output", "wait-for-active", "view-all-spool-content", "directory"]
+        },
+        {
+            name: "watch-delay", aliases: ["wd"],
+            description: "Delay in milliseconds between polls to check the status of the job.",
+            type: "number",
+            defaultValue: 3000,
+            impliesOneOf: ["wait-for-output", "wait-for-active", "view-all-spool-content", "directory"]
         }
-    ] as ICommandOptionDefinition[]),
+    ],
     profile: {
         optional: ["zosmf"]
     },

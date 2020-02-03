@@ -53,6 +53,7 @@ export class MonitorJobs {
      *
      * See JSDoc for "waitForStatusCommon" for full details on polling and other logic.
      *
+     * @deprecated - Use "waitForStatusCommon" which supports more polling options
      * @static
      * @param {AbstractSession} session - a Rest client session for z/OSMF
      * @param {IJob} job - the z/OS job to wait for (see z/OSMF Jobs APIs for details)
@@ -71,6 +72,7 @@ export class MonitorJobs {
      *
      * See JSDoc for "waitForStatusCommon" for full details on polling and other logic.
      *
+     * @deprecated - Use "waitForStatusCommon" which supports more polling options
      * @static
      * @param {AbstractSession} session - a Rest client session for z/OSMF
      * @param {string} jobname - the z/OS jobname of the job to wait for output status (see z/OSMF Jobs APIs for details)

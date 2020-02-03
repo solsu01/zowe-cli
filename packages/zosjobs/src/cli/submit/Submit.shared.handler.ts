@@ -50,6 +50,8 @@ export default class SharedSubmitHandler extends ZosmfBaseHandler {
             volume: this.mArguments.volume,
             waitForActive: this.mArguments.waitForActive,
             waitForOutput: this.mArguments.waitForOutput,
+            maxAttempts: this.mArguments.maxAttempts,
+            watchDelay: this.mArguments.watchDelay,
             task: status
         };
         const options: IDownloadOptions = {};

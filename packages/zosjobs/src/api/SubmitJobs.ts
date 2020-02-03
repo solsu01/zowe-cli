@@ -210,7 +210,13 @@ export class SubmitJobs {
                 parms.task.statusMessage = "Waiting for " + responseJobInfo.jobid + " to enter OUTPUT";
                 parms.task.percentComplete = TaskProgress.THIRTY_PERCENT;
             }
-            const job: IJob = await MonitorJobs.waitForJobOutputStatus(session, responseJobInfo);
+            const job: IJob = await MonitorJobs.waitForStatusCommon(session, {
+                jobname: responseJobInfo.jobname,
+                jobid: responseJobInfo.jobid,
+                status: JOB_STATUS.OUTPUT,
+                maxAttempts: parms.maxAttempts,
+                watchDelay: parms.watchDelay
+            });
             if (!parms.viewAllSpoolContent) {
                 return job;
             }
@@ -242,7 +248,13 @@ export class SubmitJobs {
                 parms.task.statusMessage = "Waiting for " + responseJobInfo.jobid + " to enter OUTPUT";
                 parms.task.percentComplete = TaskProgress.THIRTY_PERCENT;
             }
-            const job: IJob = await MonitorJobs.waitForJobOutputStatus(session, responseJobInfo);
+            const job: IJob = await MonitorJobs.waitForStatusCommon(session, {
+                jobname: responseJobInfo.jobname,
+                jobid: responseJobInfo.jobid,
+                status: JOB_STATUS.OUTPUT,
+                maxAttempts: parms.maxAttempts,
+                watchDelay: parms.watchDelay
+            });
             const downloadParms: IDownloadAllSpoolContentParms = {
                 jobid: job.jobid,
                 jobname: job.jobname,
