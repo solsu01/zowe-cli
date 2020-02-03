@@ -9,7 +9,7 @@
 *
 */
 
-import { ICommandDefinition } from "@zowe/imperative";
+import { ICommandDefinition, ICommandOptionDefinition } from "@zowe/imperative";
 
 export const LocalFileDefinition: ICommandDefinition = {
     name: "local-file",
@@ -28,7 +28,7 @@ export const LocalFileDefinition: ICommandDefinition = {
             required: true
         }
     ],
-    options: [
+    options: ([
         {
             name: "view-all-spool-content", aliases: ["vasc"],
             description: "Print all spool output." +
@@ -73,7 +73,7 @@ export const LocalFileDefinition: ICommandDefinition = {
             defaultValue: 3000,
             impliesOneOf: ["wait-for-output", "wait-for-active", "view-all-spool-content", "directory"]
         }
-    ],
+    ] as ICommandOptionDefinition[]),
     profile: {
         optional: ["zosmf"]
     },

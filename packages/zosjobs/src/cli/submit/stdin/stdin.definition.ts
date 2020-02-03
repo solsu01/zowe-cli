@@ -9,7 +9,7 @@
 *
 */
 
-import { ICommandDefinition } from "@zowe/imperative";
+import { ICommandDefinition, ICommandOptionDefinition } from "@zowe/imperative";
 
 export const StdinDefinition: ICommandDefinition = {
     name: "stdin",
@@ -20,7 +20,7 @@ export const StdinDefinition: ICommandDefinition = {
         "The command presents errors verbatim from the z/OSMF Jobs REST endpoints. " +
         "For more information about z/OSMF Jobs API errors, see the z/OSMF Jobs API REST documentation.",
     handler: __dirname + "/../Submit.shared.handler",
-    options: [
+    options: ([
         {
             name: "view-all-spool-content", aliases: ["vasc"],
             description: "Print all spool output." +
@@ -65,7 +65,7 @@ export const StdinDefinition: ICommandDefinition = {
             defaultValue: 3000,
             impliesOneOf: ["wait-for-output", "wait-for-active", "view-all-spool-content", "directory"]
         }
-    ],
+    ] as ICommandOptionDefinition[]),
     profile: {
         optional: ["zosmf"]
     },

@@ -9,7 +9,7 @@
 *
 */
 
-import { ICommandDefinition } from "@zowe/imperative";
+import { ICommandDefinition, ICommandOptionDefinition } from "@zowe/imperative";
 
 export const DataSetDefinition: ICommandDefinition = {
     name: "data-set",
@@ -31,7 +31,7 @@ export const DataSetDefinition: ICommandDefinition = {
             required: true
         }
     ],
-    options: [
+    options: ([
         {
             name: "volume", aliases: ["vol"],
             description: "The volume serial (VOLSER) where the data set resides. The option is required only when the data set is not" +
@@ -82,7 +82,7 @@ export const DataSetDefinition: ICommandDefinition = {
             defaultValue: 3000,
             impliesOneOf: ["wait-for-output", "wait-for-active", "view-all-spool-content", "directory"]
         }
-    ],
+    ] as ICommandOptionDefinition[]),
     profile: {
         optional: ["zosmf"]
     },
