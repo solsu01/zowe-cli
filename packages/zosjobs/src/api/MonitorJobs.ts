@@ -132,6 +132,9 @@ export class MonitorJobs {
         if (parms.attempts == null) {
             parms.attempts = MonitorJobs.DEFAULT_ATTEMPTS;
         }
+        if (parms.watchDelay == null) {
+            parms.watchDelay = MonitorJobs.DEFAULT_WATCH_DELAY;
+        }
 
         // Wait for the expected status (or timeout)
         let response;

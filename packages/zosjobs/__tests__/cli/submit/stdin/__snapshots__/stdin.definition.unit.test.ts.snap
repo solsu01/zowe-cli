@@ -50,8 +50,41 @@ Object {
         "e",
       ],
       "description": "A file extension to save the job output with. Default is '.txt'.",
+      "implies": Array [
+        "directory",
+      ],
       "name": "extension",
       "type": "string",
+    },
+    Object {
+      "aliases": Array [
+        "ma",
+      ],
+      "defaultValue": Infinity,
+      "description": "Maximum number of attempts to check the status of the job.",
+      "impliesOneOf": Array [
+        "wait-for-output",
+        "wait-for-active",
+        "view-all-spool-content",
+        "directory",
+      ],
+      "name": "max-attempts",
+      "type": "number",
+    },
+    Object {
+      "aliases": Array [
+        "wd",
+      ],
+      "defaultValue": 3000,
+      "description": "Delay in milliseconds between polls to check the status of the job.",
+      "impliesOneOf": Array [
+        "wait-for-output",
+        "wait-for-active",
+        "view-all-spool-content",
+        "directory",
+      ],
+      "name": "watch-delay",
+      "type": "number",
     },
   ],
   "outputFormatOptions": true,

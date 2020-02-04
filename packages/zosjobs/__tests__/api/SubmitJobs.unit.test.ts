@@ -73,7 +73,7 @@ describe("Submit Jobs API", () => {
                 );
                 // mocking worked if this fake job name is filled in
                 expect(job.jobname).toEqual(fakeJobName);
-                MonitorJobs.waitForJobOutputStatus = jest.fn((session, jobToWaitFor) => {
+                MonitorJobs.waitForStatusCommon = jest.fn((session, jobToWaitFor) => {
                     jobToWaitFor.status = "OUTPUT";
                     jobToWaitFor.retcode = "CC 0000";
                     return jobToWaitFor;

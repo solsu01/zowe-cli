@@ -195,22 +195,19 @@ export class SubmitJobs {
      * @memberof SubmitJobs
      */
     public static async checkSubmitOptions(session: AbstractSession, parms: ISubmitParms, responseJobInfo: IJob): Promise<IJob | ISpoolFile[]> {
-
-        if (parms.waitForActive) {
-            const activeJob = await MonitorJobs.waitForStatusCommon(session, {
-                jobid: responseJobInfo.jobid,
-                jobname: responseJobInfo.jobname,
-                status: "ACTIVE"
-            });
-            return activeJob;
-        }
         const jobParms: IMonitorJobWaitForParms = {
             jobname: responseJobInfo.jobname,
             jobid: responseJobInfo.jobid,
-            status: JOB_STATUS.OUTPUT,
+            status: parms.waitForActive ? JOB_STATUS.ACTIVE : JOB_STATUS.OUTPUT,
             maxAttempts: parms.maxAttempts,
             watchDelay: parms.watchDelay
         };
+
+        if (parms.waitForActive) {
+            const activeJob = await MonitorJobs.waitForStatusCommon(session, jobParms);
+            return activeJob;
+        }
+
         // if viewAppSpoolContent option passed, it waits till job status is output
         // then get content of each spool file and return array of ISpoolFiles object
         if (parms.viewAllSpoolContent || parms.waitForOutput) {
@@ -267,6 +264,7 @@ export class SubmitJobs {
             (await DownloadJobs.downloadAllSpoolContentCommon(session, downloadParms));
             return job;
         }
+
         return responseJobInfo;
     }
 
