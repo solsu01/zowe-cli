@@ -17,7 +17,7 @@ import {
     ISubmitJclNotifyParm,
     ISubmitJclParms,
     ISubmitJobNotifyParm,
-    ISubmitJobParms,
+    ISubmitJobParms
 } from "../../../zosjobs";
 import { JOB_STATUS } from "./types/JobStatus";
 import { JobsConstants } from "./JobsConstants";
