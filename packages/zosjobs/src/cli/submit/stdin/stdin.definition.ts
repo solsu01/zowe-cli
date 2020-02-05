@@ -69,5 +69,5 @@ export const StdinDefinition: ICommandDefinition = {
     profile: {
         optional: ["zosmf"]
     },
-    outputFormatOptions: true,
+    outputFormatOptions: true
 };
