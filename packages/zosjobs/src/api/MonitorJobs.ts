@@ -49,11 +49,11 @@ export class MonitorJobs {
     /**
      * Given an IJob (has jobname/jobid), waits for the status of the job to be "OUTPUT". This API will poll for
      * the OUTPUT status once every 3 seconds indefinitely. If the polling interval/duration is NOT sufficient, use
-     * "waitForStatusCommon" to adjust.
+     * "waitForJobStatus" to adjust.
      *
-     * See JSDoc for "waitForStatusCommon" for full details on polling and other logic.
+     * See JSDoc for "waitForJobStatus" for full details on polling and other logic.
      *
-     * @deprecated - Use "waitForStatusCommon" which supports more polling options
+     * @deprecated - Use "waitForJobStatus" which supports more polling options
      * @static
      * @param {AbstractSession} session - a Rest client session for z/OSMF
      * @param {IJob} job - the z/OS job to wait for (see z/OSMF Jobs APIs for details)
@@ -62,17 +62,17 @@ export class MonitorJobs {
      */
     public static waitForJobOutputStatus(session: AbstractSession, job: IJob): Promise<IJob> {
         ImperativeExpect.toNotBeNullOrUndefined(job, "IJob object (containing jobname and jobid) required");
-        return MonitorJobs.waitForStatusCommon(session, {jobname: job.jobname, jobid: job.jobid, status: JOB_STATUS.OUTPUT});
+        return MonitorJobs.waitForJobStatus(session, {jobname: job.jobname, jobid: job.jobid, status: JOB_STATUS.OUTPUT});
     }
 
     /**
      * Given the jobname/jobid, waits for the status of the job to be "OUTPUT". This API will poll for the OUTPUT status
      * once every 3 seconds indefinitely. If the polling interval/duration is NOT sufficient, use
-     * "waitForStatusCommon" to adjust.
+     * "waitForJobStatus" to adjust.
      *
-     * See JSDoc for "waitForStatusCommon" for full details on polling and other logic.
+     * See JSDoc for "waitForJobStatus" for full details on polling and other logic.
      *
-     * @deprecated - Use "waitForStatusCommon" which supports more polling options
+     * @deprecated - Use "waitForJobStatus" which supports more polling options
      * @static
      * @param {AbstractSession} session - a Rest client session for z/OSMF
      * @param {string} jobname - the z/OS jobname of the job to wait for output status (see z/OSMF Jobs APIs for details)
@@ -81,7 +81,26 @@ export class MonitorJobs {
      * @memberof MonitorJobs
      */
     public static waitForOutputStatus(session: AbstractSession, jobname: string, jobid: string): Promise<IJob> {
-        return MonitorJobs.waitForStatusCommon(session, {jobname, jobid, status: JOB_STATUS.OUTPUT});
+        return MonitorJobs.waitForJobStatus(session, {jobname, jobid, status: JOB_STATUS.OUTPUT});
+    }
+
+    /**
+     * Given jobname/jobid, checks for the desired "status" (default is "OUTPUT") continuously (based on the interval
+     * and attempts specified).
+     *
+     * The "order" of natural job status is INPUT > ACTIVE > OUTPUT. If the requested status is earlier in the sequence
+     * than the current status of the job, then the method returns immediately (since the job will never enter the
+     * requested status) with the current status of the job.
+     *
+     * @deprecated - This function has been renamed to "waitForJobStatus"
+     * @static
+     * @param {AbstractSession} session - a Rest client session for z/OSMF
+     * @param {IMonitorJobWaitForParms} parms - monitor jobs parameters (see interface for details)
+     * @returns {Promise<IJob>} - the promise to be fulfilled with IJob object (or rejected with an ImperativeError)
+     * @memberof MonitorJobs
+     */
+    public static waitForStatusCommon(session: AbstractSession, parms: IMonitorJobWaitForParms): Promise<IJob> {
+        return this.waitForJobStatus(session, parms);
     }
 
     /**
@@ -98,7 +117,7 @@ export class MonitorJobs {
      * @returns {Promise<IJob>} - the promise to be fulfilled with IJob object (or rejected with an ImperativeError)
      * @memberof MonitorJobs
      */
-    public static async waitForStatusCommon(session: AbstractSession, parms: IMonitorJobWaitForParms): Promise<IJob> {
+    public static async waitForJobStatus(session: AbstractSession, parms: IMonitorJobWaitForParms): Promise<IJob> {
         // Validate that required parameters are specified
         ImperativeExpect.toNotBeNullOrUndefined(parms, "IMonitorJobParms object required");
         ImperativeExpect.keysToBeDefinedAndNonBlank(parms, ["jobname"]);
@@ -121,7 +140,7 @@ export class MonitorJobs {
         }
 
         // Log the API call (& full parms at trace level)
-        this.log.info(`Monitor Jobs - "waitForStatusCommon" API request: ` +
+        this.log.info(`Monitor Jobs - "waitForJobStatus" API request: ` +
             `jobname ${parms.jobname}, jobid ${parms.jobid}, attempts ${parms.attempts}, watch delay ${parms.watchDelay}`);
         this.log.trace(`Parameters:\n${inspect(parms)}`);
 
@@ -156,7 +175,7 @@ export class MonitorJobs {
         }
 
         // Return the response
-        this.log.trace(`Monitor Jobs - "waitForStatusCommon" complete - found expected status of ${parms.status}`);
+        this.log.trace(`Monitor Jobs - "waitForJobStatus" complete - found expected status of ${parms.status}`);
         return response;
     }
 

@@ -195,7 +195,7 @@ export class SubmitJobs {
      * @memberof SubmitJobs
      */
     public static async checkSubmitOptions(session: AbstractSession, parms: ISubmitParms, responseJobInfo: IJob): Promise<IJob | ISpoolFile[]> {
-        const jobParms: IMonitorJobWaitForParms = {
+        const monitorParms: IMonitorJobWaitForParms = {
             jobname: responseJobInfo.jobname,
             jobid: responseJobInfo.jobid,
             status: parms.waitForActive ? JOB_STATUS.ACTIVE : JOB_STATUS.OUTPUT,
@@ -204,7 +204,7 @@ export class SubmitJobs {
         };
 
         if (parms.waitForActive) {
-            const activeJob = await MonitorJobs.waitForStatusCommon(session, jobParms);
+            const activeJob = await MonitorJobs.waitForJobStatus(session, monitorParms);
             return activeJob;
         }
 
@@ -215,7 +215,7 @@ export class SubmitJobs {
                 parms.task.statusMessage = "Waiting for " + responseJobInfo.jobid + " to enter OUTPUT";
                 parms.task.percentComplete = TaskProgress.THIRTY_PERCENT;
             }
-            const job: IJob = await MonitorJobs.waitForStatusCommon(session, jobParms);
+            const job: IJob = await MonitorJobs.waitForJobStatus(session, monitorParms);
             if (!parms.viewAllSpoolContent) {
                 return job;
             }
@@ -247,7 +247,7 @@ export class SubmitJobs {
                 parms.task.statusMessage = "Waiting for " + responseJobInfo.jobid + " to enter OUTPUT";
                 parms.task.percentComplete = TaskProgress.THIRTY_PERCENT;
             }
-            const job: IJob = await MonitorJobs.waitForStatusCommon(session, jobParms);
+            const job: IJob = await MonitorJobs.waitForJobStatus(session, monitorParms);
             const downloadParms: IDownloadAllSpoolContentParms = {
                 jobid: job.jobid,
                 jobname: job.jobname,
@@ -286,7 +286,7 @@ export class SubmitJobs {
             JSON.stringify(job), status, watchDelay);
         ImperativeExpect.keysToBeDefined(job, ["jobname", "jobid"], "The job object you provide must contain both 'jobname' and 'jobid'.");
         this.log.debug("Waiting to be notified of job completion from Monitor Jobs API for job %s (%s)", job.jobname, job.jobid);
-        return MonitorJobs.waitForStatusCommon(session,
+        return MonitorJobs.waitForJobStatus(session,
             {
                 jobname: job.jobname,
                 jobid: job.jobid,

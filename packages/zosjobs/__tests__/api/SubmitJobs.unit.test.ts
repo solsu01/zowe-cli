@@ -73,7 +73,7 @@ describe("Submit Jobs API", () => {
                 );
                 // mocking worked if this fake job name is filled in
                 expect(job.jobname).toEqual(fakeJobName);
-                MonitorJobs.waitForStatusCommon = jest.fn((session, jobToWaitFor) => {
+                MonitorJobs.waitForJobStatus = jest.fn((session, jobToWaitFor) => {
                     jobToWaitFor.status = "OUTPUT";
                     jobToWaitFor.retcode = "CC 0000";
                     return jobToWaitFor;
@@ -94,7 +94,7 @@ describe("Submit Jobs API", () => {
                 );
                 // mocking worked if this fake job name is filled in
                 expect(job.jobname).toEqual(fakeJobName);
-                MonitorJobs.waitForStatusCommon = jest.fn((session, jobToWaitFor) => {
+                MonitorJobs.waitForJobStatus = jest.fn((session, jobToWaitFor) => {
                     jobToWaitFor.status = "ACTIVE";
                     jobToWaitFor.retcode = null;
                     return jobToWaitFor;
@@ -111,7 +111,7 @@ describe("Submit Jobs API", () => {
 
         it("should allow users to call submitJCLNotifyCommon with correct parameters (with internal reader settings)",
             async () => {
-                (MonitorJobs as any).waitForStatusCommon = returnIJob; // mock  monitor job API used by SubmitJobs.ts
+                (MonitorJobs as any).waitForJobStatus = returnIJob; // mock  monitor job API used by SubmitJobs.ts
                 const job = await SubmitJobs.submitJclNotifyCommon(fakeSession,
                     {
                         jcl: "//EXEC PGM=IEFBR14",
@@ -134,7 +134,7 @@ describe("Submit Jobs API", () => {
 
         it("should allow users to call submitJobNotifyCommon with correct parameters (using data set)", async () => {
             (ZosmfRestClient as any).putExpectJSON = returnIJob; // mock return job
-            (MonitorJobs as any).waitForStatusCommon = returnIJob; // mock  monitor job API used by SubmitJobs.ts
+            (MonitorJobs as any).waitForJobStatus = returnIJob; // mock  monitor job API used by SubmitJobs.ts
             const job = await SubmitJobs.submitJobNotifyCommon(fakeSession, {
                 jobDataSet: "DUMMY.DATA.SET"
             });
@@ -144,7 +144,7 @@ describe("Submit Jobs API", () => {
 
         it("should allow users to call submitJCLNotify with correct parameters", async () => {
             (ZosmfRestClient as any).putExpectJSON = returnIJob; // mock return job
-            (MonitorJobs as any).waitForStatusCommon = returnIJob; // mock  monitor job API used by SubmitJobs.ts
+            (MonitorJobs as any).waitForJobStatus = returnIJob; // mock  monitor job API used by SubmitJobs.ts
             const job = await SubmitJobs.submitJclNotify(fakeSession, "//EXEC PGM=IEFBR14",
                 "VB",
                 "256");
@@ -154,7 +154,7 @@ describe("Submit Jobs API", () => {
 
         it("should allow users to call submitJobNotify with correct parameters", async () => {
             (ZosmfRestClient as any).putExpectJSON = returnIJob; // mock return job
-            (MonitorJobs as any).waitForStatusCommon = returnIJob; // mock  monitor job API used by SubmitJobs.ts
+            (MonitorJobs as any).waitForJobStatus = returnIJob; // mock  monitor job API used by SubmitJobs.ts
             const job = await SubmitJobs.submitJobNotify(fakeSession,
                 "DUMMY.DATA.SET"
             );
@@ -225,7 +225,7 @@ describe("Submit Jobs API", () => {
 
         it("should be able to catch an error awaiting submitJCLNotifyCommon",
             async () => {
-                (MonitorJobs as any).waitForStatusCommon = throwImperativeError;
+                (MonitorJobs as any).waitForJobStatus = throwImperativeError;
                 // mock  monitor job API used by
                 // SubmitJobs.ts to throw an error
                 let err: any;
@@ -260,7 +260,7 @@ describe("Submit Jobs API", () => {
 
         it("should be able to catch an error awaiting submitJobNotifyCommon", async () => {
             (ZosmfRestClient as any).putExpectJSON = returnIJob; // mock return job
-            (MonitorJobs as any).waitForStatusCommon = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
+            (MonitorJobs as any).waitForJobStatus = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
             let err: any;
             try {
                 await SubmitJobs.submitJobNotifyCommon(fakeSession, {
@@ -275,7 +275,7 @@ describe("Submit Jobs API", () => {
 
         it("should be able to catch an error awaiting submitJCLNotify", async () => {
             (ZosmfRestClient as any).putExpectJSON = returnIJob; // mock return job
-            (MonitorJobs as any).waitForStatusCommon = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
+            (MonitorJobs as any).waitForJobStatus = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
             let err: any;
             try {
                 await SubmitJobs.submitJclNotify(fakeSession, "//EXEC PGM=IEFBR14",
@@ -290,7 +290,7 @@ describe("Submit Jobs API", () => {
 
         it("should be able to catch an error awaiting submitJobNotify", async () => {
             (ZosmfRestClient as any).putExpectJSON = returnIJob; // mock return job
-            (MonitorJobs as any).waitForStatusCommon = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
+            (MonitorJobs as any).waitForJobStatus = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
             let err: any;
             try {
                 await SubmitJobs.submitJobNotify(fakeSession,
@@ -365,7 +365,7 @@ describe("Submit Jobs API", () => {
 
         it("should be able to catch an error for submitJCLNotifyCommon with catch() syntax",
             (done: any) => {
-                (MonitorJobs as any).waitForStatusCommon = throwImperativeError;
+                (MonitorJobs as any).waitForJobStatus = throwImperativeError;
                 // mock  monitor job API used by
                 // SubmitJobs.ts to throw an error
                 SubmitJobs.submitJclNotifyCommon(fakeSession,
@@ -398,7 +398,7 @@ describe("Submit Jobs API", () => {
 
         it("should be able to catch an error with submitJobNotifyCommon with catch() syntax", (done: any) => {
             (ZosmfRestClient as any).putExpectJSON = returnIJob; // mock return job
-            (MonitorJobs as any).waitForStatusCommon = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
+            (MonitorJobs as any).waitForJobStatus = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
             SubmitJobs.submitJobNotifyCommon(fakeSession, {
                 jobDataSet: "DUMMY.DATA.SET"
             }).then(() => {
@@ -412,7 +412,7 @@ describe("Submit Jobs API", () => {
 
         it("should be able to catch an error with submitJCLNotify with catch() syntax", (done: any) => {
             (ZosmfRestClient as any).putExpectJSON = returnIJob; // mock return job
-            (MonitorJobs as any).waitForStatusCommon = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
+            (MonitorJobs as any).waitForJobStatus = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
 
             SubmitJobs.submitJclNotify(fakeSession, "//EXEC PGM=IEFBR14",
                 "VB",
@@ -427,7 +427,7 @@ describe("Submit Jobs API", () => {
 
         it("should be able to catch an error with submitJobNotify with catch() syntax", (done: any) => {
             (ZosmfRestClient as any).putExpectJSON = returnIJob; // mock return job
-            (MonitorJobs as any).waitForStatusCommon = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
+            (MonitorJobs as any).waitForJobStatus = throwImperativeError; // mock  monitor job API used by SubmitJobs.ts
             SubmitJobs.submitJobNotify(fakeSession,
                 "DUMMY.DATA.SET"
             ).then(() => {

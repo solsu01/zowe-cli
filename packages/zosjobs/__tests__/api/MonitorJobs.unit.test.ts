@@ -38,7 +38,7 @@ describe("MonitorJobs", () => {
     });
 
     describe("Public Methods", () => {
-        describe("waitForStatusCommon", () => {
+        describe("waitForJobStatus", () => {
             let pollForStatusSpy = jest.spyOn(privateMonitorJobs, "pollForStatus");
 
             beforeEach(() => {
@@ -55,7 +55,7 @@ describe("MonitorJobs", () => {
                     let error: Error;
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, undefined as any);
+                        await MonitorJobs.waitForJobStatus({} as any, undefined as any);
                     } catch (e) {
                         error = e;
                     }
@@ -68,7 +68,7 @@ describe("MonitorJobs", () => {
                     let error: Error;
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, {} as any);
+                        await MonitorJobs.waitForJobStatus({} as any, {} as any);
                     } catch (e) {
                         error = e;
                     }
@@ -81,7 +81,7 @@ describe("MonitorJobs", () => {
                     let error: Error;
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, {
+                        await MonitorJobs.waitForJobStatus({} as any, {
                             jobname: "ABCD"
                         } as any);
                     } catch (e) {
@@ -96,7 +96,7 @@ describe("MonitorJobs", () => {
                     let error: Error;
 
                     try {
-                        await MonitorJobs.waitForStatusCommon(undefined as any, {
+                        await MonitorJobs.waitForJobStatus(undefined as any, {
                             jobname: "ABCD",
                             jobid  : "EFGH"
                         } as any);
@@ -112,7 +112,7 @@ describe("MonitorJobs", () => {
                     let error: Error;
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, {
+                        await MonitorJobs.waitForJobStatus({} as any, {
                             jobname: "ABCD",
                             jobid  : "EFGH",
                             status : "INVALID"
@@ -129,7 +129,7 @@ describe("MonitorJobs", () => {
                     let error: Error;
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, {
+                        await MonitorJobs.waitForJobStatus({} as any, {
                             jobname : "ABCD",
                             jobid   : "EFGH",
                             attempts: "INVALID"
@@ -144,7 +144,7 @@ describe("MonitorJobs", () => {
                     error = undefined;
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, {
+                        await MonitorJobs.waitForJobStatus({} as any, {
                             jobname : "ABCD",
                             jobid   : "EFGH",
                             attempts: -155
@@ -161,7 +161,7 @@ describe("MonitorJobs", () => {
                     let error: Error;
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, {
+                        await MonitorJobs.waitForJobStatus({} as any, {
                             jobname   : "ABCD",
                             jobid     : "EFGH",
                             watchDelay: "INVALID"
@@ -176,7 +176,7 @@ describe("MonitorJobs", () => {
                     error = undefined;
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, {
+                        await MonitorJobs.waitForJobStatus({} as any, {
                             jobname   : "ABCD",
                             jobid     : "EFGH",
                             watchDelay: -155
@@ -208,7 +208,7 @@ describe("MonitorJobs", () => {
                     });
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, parms);
+                        await MonitorJobs.waitForJobStatus({} as any, parms);
                     } catch (e) {
                         expectError = e;
                     }
@@ -227,7 +227,7 @@ describe("MonitorJobs", () => {
                     });
 
                     try {
-                        await MonitorJobs.waitForStatusCommon({} as any, parms);
+                        await MonitorJobs.waitForJobStatus({} as any, parms);
                     } catch (e) {
                         expectError = e;
                     }
@@ -246,7 +246,7 @@ describe("MonitorJobs", () => {
                     jobname: "ABCDEF"
                 };
 
-                expect(await MonitorJobs.waitForStatusCommon({sessionInfo: "Should be here"} as any, parms)).toBe(returnVal);
+                expect(await MonitorJobs.waitForJobStatus({sessionInfo: "Should be here"} as any, parms)).toBe(returnVal);
 
                 expect(pollForStatusSpy).toHaveBeenCalledTimes(1);
                 expect(pollForStatusSpy).toHaveBeenLastCalledWith({sessionInfo: "Should be here"}, {
@@ -268,60 +268,58 @@ describe("MonitorJobs", () => {
                     watchDelay: 20000
                 };
 
-                expect(await MonitorJobs.waitForStatusCommon({} as any, parms)).toBe(returnVal);
+                expect(await MonitorJobs.waitForJobStatus({} as any, parms)).toBe(returnVal);
 
                 expect(pollForStatusSpy).toHaveBeenCalledTimes(1);
                 expect(pollForStatusSpy).toHaveBeenLastCalledWith({}, parms);
             });
         });
 
-        describe("waitForOutputStatus", () => {
-            let waitForStatusCommonSpy = jest.spyOn(privateMonitorJobs, "waitForStatusCommon");
+        describe("waitForJobStatus", () => {
+            let waitForJobStatusSpy = jest.spyOn(privateMonitorJobs, "waitForJobStatus");
 
             beforeEach(() => {
-                waitForStatusCommonSpy.mockReset();
-                waitForStatusCommonSpy = jest.spyOn(privateMonitorJobs, "waitForStatusCommon");
+                waitForJobStatusSpy.mockReset();
+                waitForJobStatusSpy = jest.spyOn(privateMonitorJobs, "waitForJobStatus");
             });
 
             afterAll(() => {
-                waitForStatusCommonSpy.mockRestore();
+                waitForJobStatusSpy.mockRestore();
             });
 
-            it("should call waitForStatusCommon", async () => {
+            it("should call waitForJobStatus", async () => {
                 const returnValue = "RETURNED FROM COMMON METHOD";
-                waitForStatusCommonSpy.mockReturnValue(returnValue);
+                waitForJobStatusSpy.mockReturnValue(returnValue);
 
-                const jobname = "JOB52712";
-                const jobid = "52712";
+                const monitorParms: IMonitorJobWaitForParms = {
+                    jobname: "JOB52712",
+                    jobid: "52712"
+                };
 
-                expect(await MonitorJobs.waitForOutputStatus({test: "1234"} as any, jobname, jobid)).toBe(returnValue);
+                expect(await MonitorJobs.waitForJobStatus({test: "1234"} as any, monitorParms)).toBe(returnValue);
 
-                expect(MonitorJobs.waitForStatusCommon).toHaveBeenCalledTimes(1);
-                expect(MonitorJobs.waitForStatusCommon).toHaveBeenCalledWith({test: "1234"}, {
-                    jobname,
-                    jobid,
-                    status: JOB_STATUS.OUTPUT
-                });
+                expect(MonitorJobs.waitForJobStatus).toHaveBeenCalledTimes(1);
+                expect(MonitorJobs.waitForJobStatus).toHaveBeenCalledWith({test: "1234"}, monitorParms);
             });
         });
 
-        describe("waitForJobOutputStatus", () => {
-            let waitForStatusCommonSpy = jest.spyOn(privateMonitorJobs, "waitForStatusCommon");
+        describe("waitForJobStatus", () => {
+            let waitForJobStatusSpy = jest.spyOn(privateMonitorJobs, "waitForJobStatus");
 
             beforeEach(() => {
-                waitForStatusCommonSpy.mockReset();
-                waitForStatusCommonSpy = jest.spyOn(privateMonitorJobs, "waitForStatusCommon");
+                waitForJobStatusSpy.mockReset();
+                waitForJobStatusSpy = jest.spyOn(privateMonitorJobs, "waitForJobStatus");
             });
 
             afterAll(() => {
-                waitForStatusCommonSpy.mockRestore();
+                waitForJobStatusSpy.mockRestore();
             });
 
             it("should throw an error when job is not passed", async () => {
                 let error: Error;
 
                 try {
-                    await MonitorJobs.waitForJobOutputStatus({} as any, undefined as any);
+                    await MonitorJobs.waitForJobStatus({} as any, undefined as any);
                 } catch (e) {
                     error = e;
                 }
@@ -330,22 +328,19 @@ describe("MonitorJobs", () => {
                 expect(error.message).toMatchSnapshot();
             });
 
-            it("should call waitForStatusCommon", async () => {
-                const returnVal = "THIS SHOULD BE RETURNED BY waitForJobOutputStatus";
-                waitForStatusCommonSpy.mockReturnValue(returnVal);
+            it("should call waitForJobStatus", async () => {
+                const returnVal = "THIS SHOULD BE RETURNED BY waitForJobStatus";
+                waitForJobStatusSpy.mockReturnValue(returnVal);
 
-                const job: Partial<IJob> = {
+                const monitorParms: IMonitorJobWaitForParms = {
                     jobname: "ABCD123",
                     jobid: "782314"
                 };
 
-                expect(await MonitorJobs.waitForJobOutputStatus({shouldPassDown: true} as any, job as any)).toBe(returnVal);
+                expect(await MonitorJobs.waitForJobStatus({shouldPassDown: true} as any, monitorParms)).toBe(returnVal);
 
-                expect(MonitorJobs.waitForStatusCommon).toHaveBeenCalledTimes(1);
-                expect(MonitorJobs.waitForStatusCommon).toHaveBeenCalledWith({shouldPassDown: true}, {
-                    ...job,
-                    status: JOB_STATUS.OUTPUT
-                });
+                expect(MonitorJobs.waitForJobStatus).toHaveBeenCalledTimes(1);
+                expect(MonitorJobs.waitForJobStatus).toHaveBeenCalledWith({shouldPassDown: true}, monitorParms);
             });
         });
     });

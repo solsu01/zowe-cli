@@ -96,7 +96,7 @@ describe("System Tests - Monitor Jobs", () => {
     });
 
     /**********************************************/
-    // API method "waitForOutputStatus" system tests
+    // API method "waitForJobStatus" system tests
     describe("api method wait for output status", () => {
 
         // Single error situation - the majority are tested via the common method (which this method invokes)
@@ -104,7 +104,7 @@ describe("System Tests - Monitor Jobs", () => {
             it("should detect and surface an error if the job requested is not found", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForOutputStatus(REAL_SESSION, "JOB1", "JOB123");
+                    const response = await MonitorJobs.waitForJobStatus(REAL_SESSION, {jobname: "JOB1", jobid: "JOB123"});
                 } catch (e) {
                     error = e;
                 }
@@ -138,7 +138,10 @@ describe("System Tests - Monitor Jobs", () => {
 
                     // start checking the job status
                     let doneCalled: boolean = false;
-                    MonitorJobs.waitForOutputStatus(REAL_SESSION, jobInfo.jobname, jobInfo.jobid).then((status) => {
+                    MonitorJobs.waitForJobStatus(REAL_SESSION, {
+                        jobname: jobInfo.jobname,
+                        jobid: jobInfo.jobid
+                    }).then((status) => {
                         expect(status.jobid).toEqual(jobInfo.jobid);
                         expect(status.jobname).toEqual(jobInfo.jobname);
                         expect(status.status).toBe("OUTPUT");
@@ -174,7 +177,7 @@ describe("System Tests - Monitor Jobs", () => {
     });
 
     /**********************************************/
-    // API method "waitForJobOutputStatus" system tests
+    // API method "waitForJobStatus" system tests
     describe("api method wait for job output status", () => {
 
         // Single error situation - the majority are tested via the common method (which this method invokes)
@@ -183,7 +186,7 @@ describe("System Tests - Monitor Jobs", () => {
                 let error;
                 try {
                     const params: any = {jobname: "JOB1", jobid: "JOB123"};
-                    const response = await MonitorJobs.waitForJobOutputStatus(REAL_SESSION, params);
+                    const response = await MonitorJobs.waitForJobStatus(REAL_SESSION, params);
                 } catch (e) {
                     error = e;
                 }
@@ -217,7 +220,10 @@ describe("System Tests - Monitor Jobs", () => {
 
                     // start checking the job status
                     let doneCalled: boolean = false;
-                    MonitorJobs.waitForJobOutputStatus(REAL_SESSION, jobInfo).then((status) => {
+                    MonitorJobs.waitForJobStatus(REAL_SESSION, {
+                        jobid: jobInfo.jobid,
+                        jobname: jobInfo.jobname
+                    }).then((status) => {
                         expect(status.jobid).toEqual(jobInfo.jobid);
                         expect(status.jobname).toEqual(jobInfo.jobname);
                         expect(status.status).toBe("OUTPUT");
@@ -253,7 +259,7 @@ describe("System Tests - Monitor Jobs", () => {
     });
 
     /**********************************************/
-    // API method "waitForStatusCommon" system tests
+    // API method "waitForJobStatus" system tests
     describe("api method wait for output status common", () => {
 
         // All error situations/scenarios - negative system
@@ -261,7 +267,7 @@ describe("System Tests - Monitor Jobs", () => {
             it("should detect and surface an error message if an invalid jobname is specified", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForStatusCommon(REAL_SESSION, {jobid: "JOB123", jobname: "((((("});
+                    const response = await MonitorJobs.waitForJobStatus(REAL_SESSION, {jobid: "JOB123", jobname: "((((("});
                 } catch (e) {
                     error = e;
                 }
@@ -281,7 +287,7 @@ describe("System Tests - Monitor Jobs", () => {
             it("should detect and surface an error message if an invalid jobid is specified", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForStatusCommon(REAL_SESSION, {jobid: "(", jobname: "JOB1"});
+                    const response = await MonitorJobs.waitForJobStatus(REAL_SESSION, {jobid: "(", jobname: "JOB1"});
                 } catch (e) {
                     error = e;
                 }
@@ -301,7 +307,7 @@ describe("System Tests - Monitor Jobs", () => {
             it("should detect and surface an error if the job requested is not found", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForStatusCommon(REAL_SESSION, {jobid: "JOB123", jobname: "JOB1"});
+                    const response = await MonitorJobs.waitForJobStatus(REAL_SESSION, {jobid: "JOB123", jobname: "JOB1"});
                 } catch (e) {
                     error = e;
                 }
@@ -338,7 +344,7 @@ describe("System Tests - Monitor Jobs", () => {
                 GetJobs.getStatusCommon = mockedGetJobs;
 
                 // check that the status is input
-                const status = await MonitorJobs.waitForStatusCommon(REAL_SESSION,
+                const status = await MonitorJobs.waitForJobStatus(REAL_SESSION,
                     {
                         jobname: jobInfo.jobname,
                         jobid: jobInfo.jobid,
@@ -374,7 +380,7 @@ describe("System Tests - Monitor Jobs", () => {
                 GetJobs.getStatusCommon = mockedGetJobs;
 
                 // check that the status is active
-                const status = await MonitorJobs.waitForStatusCommon(REAL_SESSION,
+                const status = await MonitorJobs.waitForJobStatus(REAL_SESSION,
                     {
                         jobname: jobInfo.jobname,
                         jobid: jobInfo.jobid,
@@ -410,7 +416,7 @@ describe("System Tests - Monitor Jobs", () => {
                 GetJobs.getStatusCommon = mockedGetJobs;
 
                 // check that the status is output
-                const status = await MonitorJobs.waitForStatusCommon(REAL_SESSION,
+                const status = await MonitorJobs.waitForJobStatus(REAL_SESSION,
                     {
                         jobname: jobInfo.jobname,
                         jobid: jobInfo.jobid,
@@ -445,7 +451,7 @@ describe("System Tests - Monitor Jobs", () => {
 
                     // start checking the job status
                     let doneCalled: boolean = false;
-                    MonitorJobs.waitForStatusCommon(REAL_SESSION, {
+                    MonitorJobs.waitForJobStatus(REAL_SESSION, {
                         jobname: jobInfo.jobname, jobid: jobInfo.jobid, status: "OUTPUT"
                     }).then((status) => {
                         if (!doneCalled) {
@@ -502,7 +508,7 @@ describe("System Tests - Monitor Jobs", () => {
                 SubmitJobs.submitJcl(REAL_SESSION, renderedJcl).then((jobInfo) => {
 
                     // start checking the job status
-                    MonitorJobs.waitForStatusCommon(REAL_SESSION, {
+                    MonitorJobs.waitForJobStatus(REAL_SESSION, {
                         jobname: jobInfo.jobname, jobid: jobInfo.jobid, status: "OUTPUT", attempts: ATTEMPTS
                     }).then((status) => {
                         done(`Error - we should not have received a status of OUTPUT`);
@@ -533,7 +539,7 @@ describe("System Tests - Monitor Jobs", () => {
 
                     // start checking the job status
                     let doneCalled: boolean = false;
-                    MonitorJobs.waitForStatusCommon(REAL_SESSION, {
+                    MonitorJobs.waitForJobStatus(REAL_SESSION, {
                         jobname: jobInfo.jobname, jobid: jobInfo.jobid, status: "ACTIVE"
                     }).then((status) => {
                         expect(status.jobid).toEqual(jobInfo.jobid);
@@ -582,7 +588,7 @@ describe("System Tests - Monitor Jobs", () => {
 
                     // start checking the job status
                     let doneCalled: boolean = false;
-                    MonitorJobs.waitForStatusCommon(REAL_SESSION, {
+                    MonitorJobs.waitForJobStatus(REAL_SESSION, {
                         jobname: jobInfo.jobname, jobid: jobInfo.jobid, status: "OUTPUT"
                     }).then((status) => {
                         expect(status.jobid).toEqual(jobInfo.jobid);
@@ -627,7 +633,7 @@ describe("System Tests - Monitor Jobs", () => {
                 SubmitJobs.submitJcl(REAL_SESSION, renderedJcl).then((jobInfo) => {
 
                     // Wait for the status to be active
-                    MonitorJobs.waitForStatusCommon(REAL_SESSION, {
+                    MonitorJobs.waitForJobStatus(REAL_SESSION, {
                         jobname: jobInfo.jobname, jobid: jobInfo.jobid, status: "ACTIVE"
                     }).then((status) => {
                         expect(status.jobid).toEqual(jobInfo.jobid);
@@ -635,7 +641,7 @@ describe("System Tests - Monitor Jobs", () => {
                         expect(status.status).toBe("ACTIVE");
 
                         // Wait for the status to be output
-                        MonitorJobs.waitForStatusCommon(REAL_SESSION, {
+                        MonitorJobs.waitForJobStatus(REAL_SESSION, {
                             jobname: jobInfo.jobname, jobid: jobInfo.jobid, status: "OUTPUT"
                         }).then((nextStatus) => {
                             expect(nextStatus.jobid).toEqual(jobInfo.jobid);

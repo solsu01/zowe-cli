@@ -212,12 +212,12 @@ describe("submit shared handler", () => {
             };
 
 
-            MonitorJobs.waitForJobOutputStatus = jest.fn((session, jobToWaitFor) => {
+            MonitorJobs.waitForJobStatus = jest.fn((session, parms) => {
                 return completedJob;
             });
 
             SubmitJobs.checkSubmitOptions = jest.fn((session, parms) => {
-                return MonitorJobs.waitForJobOutputStatus(session, parms);
+                return MonitorJobs.waitForJobStatus(session, parms);
             });
             // The handler should fail
             const theDataSet = "DATA.SET";
@@ -236,7 +236,7 @@ describe("submit shared handler", () => {
             expect(error).toBeUndefined();
             expect(SubmitJobs.submitJob).toHaveBeenCalledTimes(1);
             expect(SubmitJobs.checkSubmitOptions).toHaveBeenCalledTimes(1);
-            expect(MonitorJobs.waitForJobOutputStatus).toHaveBeenCalledTimes(1);
+            expect(MonitorJobs.waitForJobStatus).toHaveBeenCalledTimes(1);
             expect(dataSetSpecified).toBe(theDataSet);
         });
 
@@ -268,12 +268,12 @@ describe("submit shared handler", () => {
             };
 
 
-            MonitorJobs.waitForStatusCommon = jest.fn((session, jobToWaitFor) => {
+            MonitorJobs.waitForJobStatus = jest.fn((session, jobToWaitFor) => {
                 return completedJob;
             });
 
             SubmitJobs.checkSubmitOptions = jest.fn((session, parms) => {
-                return MonitorJobs.waitForStatusCommon(session, parms);
+                return MonitorJobs.waitForJobStatus(session, parms);
             });
             // The handler should fail
             const theDataSet = "DATA.SET";
@@ -292,7 +292,7 @@ describe("submit shared handler", () => {
             expect(error).toBeUndefined();
             expect(SubmitJobs.submitJob).toHaveBeenCalledTimes(1);
             expect(SubmitJobs.checkSubmitOptions).toHaveBeenCalledTimes(1);
-            expect(MonitorJobs.waitForStatusCommon).toHaveBeenCalledTimes(1);
+            expect(MonitorJobs.waitForJobStatus).toHaveBeenCalledTimes(1);
             expect(dataSetSpecified).toBe(theDataSet);
         });
 

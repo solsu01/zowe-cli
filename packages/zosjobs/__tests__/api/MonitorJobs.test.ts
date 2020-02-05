@@ -55,7 +55,8 @@ describe("Monitor Jobs", () => {
             it("should detect a missing session", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForOutputStatus(undefined, "FAKE", "FAKE");
+                    const response = await MonitorJobs.waitForJobStatus(undefined,
+                        {jobname: "FAKE", jobid: "FAKE"});
                 } catch (e) {
                     error = e;
                 }
@@ -65,7 +66,8 @@ describe("Monitor Jobs", () => {
             });
 
             it("should detect a missing session - then/catch", (done) => {
-                MonitorJobs.waitForOutputStatus(undefined, "FAKE", "FAKE").then((response) => {
+                MonitorJobs.waitForJobStatus(undefined,
+                    {jobname: "FAKE", jobid: "FAKE"}).then((response) => {
                     done(`Monitor jobs should have thrown an error because the session is missing.`);
                 }).catch((error) => {
                     expect(error).toBeDefined();
@@ -78,7 +80,8 @@ describe("Monitor Jobs", () => {
             it("should detect a missing jobname", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), undefined, "FAKE");
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: undefined, jobid: "FAKE"});
                 } catch (e) {
                     error = e;
                 }
@@ -90,7 +93,8 @@ describe("Monitor Jobs", () => {
             it("should detect a blank jobname", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), " ", "FAKE");
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: " ", jobid: "FAKE"});
                 } catch (e) {
                     error = e;
                 }
@@ -102,7 +106,8 @@ describe("Monitor Jobs", () => {
             it("should detect a missing jobid", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", undefined);
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: "FAKE", jobid: undefined});
                 } catch (e) {
                     error = e;
                 }
@@ -114,7 +119,8 @@ describe("Monitor Jobs", () => {
             it("should detect a blank jobid", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", " ");
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: "FAKE", jobid: " "});
                 } catch (e) {
                     error = e;
                 }
@@ -133,7 +139,8 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobs;
 
-                const response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", "FAKE");
+                const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                    {jobname: "FAKE", jobid: "FAKE"});
                 expect(response).toMatchSnapshot();
                 expect(mockedGetJobs).toHaveBeenCalledTimes(1);
             });
@@ -149,7 +156,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", "FAKE");
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: "FAKE", jobid: "FAKE"});
                 } catch (e) {
                     error = e;
                 }
@@ -167,7 +175,8 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobsCommon;
 
-                MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", "FAKE").then((response) => {
+                MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                    {jobname: "FAKE", jobid: "FAKE"}).then((response) => {
                     done("Monitor jobs should not have fulfilled the promise because getJobs should have thrown and error");
                 }).catch((error) => {
                     expect(error).toBeDefined();
@@ -196,7 +205,8 @@ describe("Monitor Jobs", () => {
                 const start = new Date().getTime();
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", "FAKE");
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: "FAKE", jobid: "FAKE"});
                 } catch (e) {
                     error = e;
                 }
@@ -230,7 +240,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", "FAKE");
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: "FAKE", jobid: "FAKE"});
                 } catch (e) {
                     error = e;
                 }
@@ -256,7 +267,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", "FAKE");
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: "FAKE", jobid: "FAKE"});
                 } catch (e) {
                     error = e;
                 }
@@ -283,7 +295,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", "FAKE");
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: "FAKE", jobid: "FAKE"});
                 } catch (e) {
                     error = e;
                 }
@@ -311,7 +324,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForOutputStatus(new Session({hostname: "fake", port: 443}), "FAKE", "FAKE");
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        {jobname: "FAKE", jobid: "FAKE"});
                 } catch (e) {
                     error = e;
                 }
@@ -333,7 +347,7 @@ describe("Monitor Jobs", () => {
             it("should detect missing IJob", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), undefined);
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), undefined);
                 } catch (e) {
                     error = e;
                 }
@@ -345,8 +359,8 @@ describe("Monitor Jobs", () => {
             it("should detect a missing jobname", async () => {
                 let error;
                 try {
-                    const obj = {jobname: undefined as string, jobid: "FAKE"};
-                    const response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), obj as IJob);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: undefined as string, jobid: "FAKE"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -358,8 +372,8 @@ describe("Monitor Jobs", () => {
             it("should detect a blank jobname", async () => {
                 let error;
                 try {
-                    const obj = {jobname: " ", jobid: "FAKE"};
-                    const response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), obj as IJob);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: " ", jobid: "FAKE"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -371,8 +385,8 @@ describe("Monitor Jobs", () => {
             it("should detect a missing jobid", async () => {
                 let error;
                 try {
-                    const obj = {jobid: undefined as string, jobname: "FAKE"};
-                    const response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), obj as IJob);
+                    const monitorParms: IMonitorJobWaitForParms = {jobid: undefined as string, jobname: "FAKE"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -384,8 +398,8 @@ describe("Monitor Jobs", () => {
             it("should detect a blank jobid", async () => {
                 let error;
                 try {
-                    const obj = {jobid: " ", jobname: "FAKE"};
-                    const response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), obj as IJob);
+                    const monitorParms: IMonitorJobWaitForParms = {jobid: " ", jobname: "FAKE"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -397,8 +411,8 @@ describe("Monitor Jobs", () => {
             it("should detect a missing session", async () => {
                 let error;
                 try {
-                    const obj = {jobname: "fake", jobid: "fake"};
-                    const response = await MonitorJobs.waitForJobOutputStatus(undefined, obj as IJob);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: "fake", jobid: "fake"};
+                    const response = await MonitorJobs.waitForJobStatus(undefined, monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -408,8 +422,8 @@ describe("Monitor Jobs", () => {
             });
 
             it("should detect a missing session - then/catch", (done) => {
-                const obj = {jobname: "fake", jobid: "fake"};
-                MonitorJobs.waitForJobOutputStatus(undefined, obj as IJob).then((response) => {
+                const monitorParms: IMonitorJobWaitForParms = {jobname: "fake", jobid: "fake"};
+                MonitorJobs.waitForJobStatus(undefined, monitorParms).then((response) => {
                     done(`Monitor jobs should have thrown an error because the session is missing.`);
                 }).catch((error) => {
                     expect(error).toBeDefined();
@@ -429,9 +443,8 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobs;
 
-                // IJob requires more fields to be populated - fake it out with only the required here.
-                const iJobParms: any = {jobname: "FAKE", jobid: "FAKE"};
-                const response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), iJobParms);
+                const monitorParms: IMonitorJobWaitForParms = {jobname: "FAKE", jobid: "FAKE"};
+                const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 expect(response).toMatchSnapshot();
                 expect(mockedGetJobs).toHaveBeenCalledTimes(1);
             });
@@ -444,8 +457,8 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobsCommon;
 
-                const iJobParms: any = {jobname: "FAKE", jobid: "FAKE"};
-                MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), iJobParms).then((response) => {
+                const monitorParms: IMonitorJobWaitForParms = {jobname: "FAKE", jobid: "FAKE"};
+                MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms).then((response) => {
                     done("Monitor jobs should not have fulfilled the promise because getJobs should have thrown and error");
                 }).catch((error) => {
                     expect(error).toBeDefined();
@@ -467,9 +480,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    // IJob requires more fields to be populated - fake it out with only the required here.
-                    const iJobParms: any = {jobname: "FAKE", jobid: "FAKE"};
-                    response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), iJobParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: "FAKE", jobid: "FAKE"};
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -497,9 +509,8 @@ describe("Monitor Jobs", () => {
                 const start = new Date().getTime();
                 let error;
                 try {
-                    // IJob requires more fields to be populated - fake it out with only the required here.
-                    const iJobParms: any = {jobname: "FAKE", jobid: "FAKE"};
-                    const response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), iJobParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: "FAKE", jobid: "FAKE"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -533,9 +544,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    // IJob requires more fields to be populated - fake it out with only the required here.
-                    const iJobParms: any = {jobname: "FAKE", jobid: "FAKE"};
-                    response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), iJobParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: "FAKE", jobid: "FAKE"};
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -561,9 +571,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    // IJob requires more fields to be populated - fake it out with only the required here.
-                    const iJobParms: any = {jobname: "FAKE", jobid: "FAKE"};
-                    response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), iJobParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: "FAKE", jobid: "FAKE"};
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -590,9 +599,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    // IJob requires more fields to be populated - fake it out with only the required here.
-                    const iJobParms: any = {jobname: "FAKE", jobid: "FAKE"};
-                    response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), iJobParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: "FAKE", jobid: "FAKE"};
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -620,9 +628,8 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    // IJob requires more fields to be populated - fake it out with only the required here.
-                    const iJobParms: any = {jobname: "FAKE", jobid: "FAKE"};
-                    response = await MonitorJobs.waitForJobOutputStatus(new Session({hostname: "fake", port: 443}), iJobParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: "FAKE", jobid: "FAKE"};
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -643,7 +650,7 @@ describe("Monitor Jobs", () => {
             it("should detect missing IMonitorJobParms", async () => {
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}), undefined);
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), undefined);
                 } catch (e) {
                     error = e;
                 }
@@ -655,9 +662,8 @@ describe("Monitor Jobs", () => {
             it("should detect a missing jobname", async () => {
                 let error;
                 try {
-                    const obj = {jobname: undefined as string, jobid: "FAKE"};
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
-                        obj as IMonitorJobWaitForParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: undefined as string, jobid: "FAKE"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -669,9 +675,8 @@ describe("Monitor Jobs", () => {
             it("should detect a blank jobname", async () => {
                 let error;
                 try {
-                    const obj = {jobname: " ", jobid: "FAKE"};
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
-                        obj as IMonitorJobWaitForParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: " ", jobid: "FAKE"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -683,9 +688,8 @@ describe("Monitor Jobs", () => {
             it("should detect a missing jobid", async () => {
                 let error;
                 try {
-                    const obj = {jobid: undefined as string, jobname: "FAKE"};
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
-                        obj as IMonitorJobWaitForParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobid: undefined as string, jobname: "FAKE"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -697,9 +701,8 @@ describe("Monitor Jobs", () => {
             it("should detect a blank jobid", async () => {
                 let error;
                 try {
-                    const obj = {jobid: " ", jobname: "FAKE"};
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
-                        obj as IMonitorJobWaitForParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobid: " ", jobname: "FAKE"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -711,8 +714,8 @@ describe("Monitor Jobs", () => {
             it("should detect a missing session", async () => {
                 let error;
                 try {
-                    const obj = {jobname: "fake", jobid: "fake"};
-                    const response = await MonitorJobs.waitForStatusCommon(undefined, obj as IMonitorJobWaitForParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: "fake", jobid: "fake"};
+                    const response = await MonitorJobs.waitForJobStatus(undefined, monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -722,8 +725,8 @@ describe("Monitor Jobs", () => {
             });
 
             it("should detect a missing session - then/catch", (done) => {
-                const obj = {jobname: "fake", jobid: "fake"};
-                MonitorJobs.waitForStatusCommon(undefined, obj).then((response) => {
+                const monitorParms: IMonitorJobWaitForParms = {jobname: "fake", jobid: "fake"};
+                MonitorJobs.waitForJobStatus(undefined, monitorParms).then((response) => {
                     done(`Monitor jobs should have thrown an error because the session is missing.`);
                 }).catch((error) => {
                     expect(error).toBeDefined();
@@ -736,9 +739,9 @@ describe("Monitor Jobs", () => {
             it("should detect an invalid status", async () => {
                 let error;
                 try {
-                    const obj = {jobname: "fake", jobid: "fake", status: "BOGUS"};
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
-                        obj as IMonitorJobWaitForParms);
+                    const monitorParms: any = {jobname: "fake", jobid: "fake", status: "BOGUS"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        monitorParms as IMonitorJobWaitForParms);
                 } catch (e) {
                     error = e;
                 }
@@ -750,9 +753,8 @@ describe("Monitor Jobs", () => {
             it("should detect invalid attempts", async () => {
                 let error;
                 try {
-                    const obj = {jobname: "fake", jobid: "fake", attempts: -1};
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
-                        obj as IMonitorJobWaitForParms);
+                    const monitorParms: IMonitorJobWaitForParms = {jobname: "fake", jobid: "fake", attempts: -1};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}), monitorParms);
                 } catch (e) {
                     error = e;
                 }
@@ -764,9 +766,9 @@ describe("Monitor Jobs", () => {
             it("should detect invalid attempts type", async () => {
                 let error;
                 try {
-                    const obj: any = {jobname: "fake", jobid: "fake", attempts: "blah"};
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
-                        obj as IMonitorJobWaitForParms);
+                    const monitorParms: any = {jobname: "fake", jobid: "fake", attempts: "blah"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        monitorParms as IMonitorJobWaitForParms);
                 } catch (e) {
                     error = e;
                 }
@@ -778,9 +780,9 @@ describe("Monitor Jobs", () => {
             it("should detect invalid watchDelay", async () => {
                 let error;
                 try {
-                    const obj: any = {jobname: "fake", jobid: "fake", watchDelay: -1};
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
-                        obj as IMonitorJobWaitForParms);
+                    const monitorParms: any = {jobname: "fake", jobid: "fake", watchDelay: -1};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        monitorParms as IMonitorJobWaitForParms);
                 } catch (e) {
                     error = e;
                 }
@@ -792,9 +794,9 @@ describe("Monitor Jobs", () => {
             it("should detect invalid watchDelay type", async () => {
                 let error;
                 try {
-                    const obj: any = {jobname: "fake", jobid: "fake", watchDelay: "blah"};
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
-                        obj as IMonitorJobWaitForParms);
+                    const monitorParms: any = {jobname: "fake", jobid: "fake", watchDelay: "blah"};
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
+                        monitorParms as IMonitorJobWaitForParms);
                 } catch (e) {
                     error = e;
                 }
@@ -813,7 +815,7 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobs;
 
-                const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                     {jobname: "FAKE", jobid: "FAKE"});
                 expect(response).toMatchSnapshot();
                 expect(mockedGetJobs).toHaveBeenCalledTimes(1);
@@ -827,7 +829,7 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobs;
 
-                const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                     {jobname: "FAKE", jobid: "FAKE", status: "ACTIVE"});
                 expect(response).toMatchSnapshot();
                 expect(mockedGetJobs).toHaveBeenCalledTimes(1);
@@ -841,7 +843,7 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobs;
 
-                const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                     {jobname: "FAKE", jobid: "FAKE", status: "INPUT"});
                 expect(response).toMatchSnapshot();
                 expect(mockedGetJobs).toHaveBeenCalledTimes(1);
@@ -855,7 +857,7 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobs;
 
-                const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                     {jobname: "FAKE", jobid: "FAKE", status: "ACTIVE"});
                 expect(response).toMatchSnapshot();
                 expect(mockedGetJobs).toHaveBeenCalledTimes(1);
@@ -869,7 +871,7 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobs;
 
-                const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                     {jobname: "FAKE", jobid: "FAKE", status: "OUTPUT"});
                 expect(response).toMatchSnapshot();
                 expect(mockedGetJobs).toHaveBeenCalledTimes(1);
@@ -883,7 +885,7 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobs;
 
-                const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                     {jobname: "FAKE", jobid: "FAKE", status: "INPUT"});
                 expect(response).toMatchSnapshot();
                 expect(mockedGetJobs).toHaveBeenCalledTimes(1);
@@ -897,7 +899,7 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobs;
 
-                const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                     {jobname: "FAKE", jobid: "FAKE", status: "INPUT"});
                 expect(response).toMatchSnapshot();
                 expect(mockedGetJobs).toHaveBeenCalledTimes(1);
@@ -914,7 +916,7 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                         {jobname: "FAKE", jobid: "FAKE", status: "OUTPUT"});
                 } catch (e) {
                     error = e;
@@ -933,7 +935,7 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobsCommon;
 
-                MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                     {jobname: "FAKE", jobid: "FAKE", status: "OUTPUT"}).then((response) => {
                     done("Monitor jobs should not have fulfilled the promise because getJobs should have thrown and error");
                 }).catch((error) => {
@@ -953,7 +955,7 @@ describe("Monitor Jobs", () => {
                 });
                 GetJobs.getStatusCommon = mockedGetJobsCommon;
 
-                MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                     {jobname: "FAKE", jobid: "FAKE", status: "OUTPUT"}).then((response) => {
                     done("Monitor jobs should not have fulfilled the promise because getJobs should have throw and error");
                 }).catch((error) => {
@@ -978,7 +980,7 @@ describe("Monitor Jobs", () => {
 
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                         {jobname: "FAKE", jobid: "FAKE", status: "ACTIVE", attempts, watchDelay: 1});
                 } catch (e) {
                     error = e;
@@ -1000,7 +1002,7 @@ describe("Monitor Jobs", () => {
 
                 let error;
                 try {
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                         {jobname: "FAKE", jobid: "FAKE", status: "ACTIVE", attempts});
                 } catch (e) {
                     error = e;
@@ -1025,7 +1027,7 @@ describe("Monitor Jobs", () => {
                 // Start time
                 const start = new Date().getTime();
                 try {
-                    const response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                    const response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                         {jobname: "FAKE", jobid: "FAKE", status: "ACTIVE", attempts});
                 } catch (e) {
                     error = e;
@@ -1060,7 +1062,7 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                         {jobname: "FAKE", jobid: "FAKE", status: "ACTIVE", watchDelay: 1});
                 } catch (e) {
                     error = e;
@@ -1087,7 +1089,7 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                         {jobname: "FAKE", jobid: "FAKE", status: "OUTPUT", watchDelay: 1});
                 } catch (e) {
                     error = e;
@@ -1114,7 +1116,7 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                         {jobname: "FAKE", jobid: "FAKE", status: "OUTPUT", watchDelay: 1});
                 } catch (e) {
                     error = e;
@@ -1142,7 +1144,7 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                         {jobname: "FAKE", jobid: "FAKE", status: "OUTPUT", watchDelay: 1});
                 } catch (e) {
                     error = e;
@@ -1171,7 +1173,7 @@ describe("Monitor Jobs", () => {
                 let error;
                 let response;
                 try {
-                    response = await MonitorJobs.waitForStatusCommon(new Session({hostname: "fake", port: 443}),
+                    response = await MonitorJobs.waitForJobStatus(new Session({hostname: "fake", port: 443}),
                         {jobname: "FAKE", jobid: "FAKE", status: "OUTPUT", watchDelay: 1});
                 } catch (e) {
                     error = e;
