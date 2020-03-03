@@ -81,7 +81,7 @@ export class Invoke {
             const reqHeaders: IHeaderContent[] = [
                 Headers.APPLICATION_JSON,
                 {[Headers.CONTENT_LENGTH]: JSON.stringify(reqPayload).length.toString()},
-                {[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"}
+                {[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600}
             ];
 
             const response = await ZosmfRestClient.putExpectJSON(session, endpoint, reqHeaders, reqPayload);

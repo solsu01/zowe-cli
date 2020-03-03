@@ -1010,7 +1010,7 @@ export class Upload {
      */
     private static generateHeadersBasedOnOptions(options: IUploadOptions, context?: string): IHeaderContent[] {
         const reqHeaders: IHeaderContent[] = [];
-        reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"});
+        reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600});
 
         switch (context) {
             case "stream":

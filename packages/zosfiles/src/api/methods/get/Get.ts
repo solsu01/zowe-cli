@@ -46,7 +46,7 @@ export class Get {
             reqHeaders = [ZosmfHeaders.X_IBM_BINARY];
         }
 
-        reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"});
+        reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600});
 
         if (options.volume) {
             endpoint = posix.join(ZosFilesConstants.RESOURCE, ZosFilesConstants.RES_DS_FILES, `-(${options.volume})`, dataSetName);
@@ -90,7 +90,7 @@ export class Get {
             }
         }
 
-        reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"});
+        reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600});
 
         const content = await ZosmfRestClient.getExpectBuffer(session, endpoint, reqHeaders);
 

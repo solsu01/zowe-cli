@@ -84,7 +84,7 @@ export class Download {
                 reqHeaders = [ZosmfHeaders.X_IBM_BINARY];
             }
 
-            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"});
+            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600});
 
             // Get contents of the data set
 
