@@ -180,4 +180,12 @@ export class ZosmfHeaders {
      * @memberof ZosmfHeaders
      */
     public static readonly X_IBM_RETURN_ETAG: IHeaderContent = {"X-IBM-Return-Etag": "true"};
+
+    /**
+     * Header to set the TsoServlet timeout
+     * By default timeout is set to 30 seconds. Can specify a value between 5 and 600 seconds
+     * @static
+     * @memberof ZosmfHeaders
+     */
+    public static readonly X_IBM_RESPONSE_TIMEOUT = "X-IBM-Response-Timeout";
 }

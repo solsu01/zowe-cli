@@ -59,6 +59,8 @@ export class List {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
 
+            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"});
+
             this.log.debug(`Endpoint: ${endpoint}`);
 
             const response: any = await ZosmfRestClient.getExpectJSON(session, endpoint, reqHeaders);
@@ -107,6 +109,8 @@ export class List {
             } else {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
+
+            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"});
 
             // Migrated recall options
             if (options.recall) {
@@ -165,6 +169,8 @@ export class List {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
 
+            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"});
+
             this.log.debug(`Endpoint: ${endpoint}`);
 
             const response: any = await ZosmfRestClient.getExpectJSON(session, endpoint, reqHeaders);
@@ -209,6 +215,8 @@ export class List {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
 
+            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"});
+
             this.log.debug(`Endpoint: ${endpoint}`);
 
             const response: any = await ZosmfRestClient.getExpectJSON(session, endpoint, reqHeaders);
@@ -250,6 +258,8 @@ export class List {
             } else {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
+
+            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"});
 
             this.log.debug(`Endpoint: ${endpoint}`);
 

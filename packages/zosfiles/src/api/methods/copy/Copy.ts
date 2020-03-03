@@ -19,6 +19,8 @@ import { IZosFilesResponse } from "../../doc/IZosFilesResponse";
 import { IHeaderContent } from "../../../../../rest/src/doc/IHeaderContent";
 import { IDataSet } from "../../doc/IDataSet";
 import { ICopyDatasetOptions } from "./doc/ICopyDatasetOptions";
+import { ZosmfHeaders } from "../../../../../rest/src/ZosmfHeaders";
+
 /**
  * This class holds helper functions that are used to copy the contents of datasets through the
  * z/OSMF APIs.
@@ -65,7 +67,8 @@ export class Copy {
 
         const reqHeaders: IHeaderContent[] = [
             Headers.APPLICATION_JSON,
-            { [Headers.CONTENT_LENGTH]: JSON.stringify(payload).length.toString() }
+            { [Headers.CONTENT_LENGTH]: JSON.stringify(payload).length.toString() },
+            { [ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600" }
         ];
 
         try {

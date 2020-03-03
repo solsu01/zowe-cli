@@ -14,6 +14,7 @@ import { AbstractSession, ImperativeExpect, Logger, IHeaderContent, Headers } fr
 import { posix } from "path";
 
 import { ZosmfRestClient } from "../../../../../rest";
+import { ZosmfHeaders } from "../../../../../rest/src/ZosmfHeaders";
 import { ZosFilesConstants } from "../../constants/ZosFiles.constants";
 import { ZosFilesMessages } from "../../constants/ZosFiles.messages";
 import { IZosFilesResponse } from "../../doc/IZosFilesResponse";
@@ -55,7 +56,8 @@ export class HMigrate {
 
             const headers: IHeaderContent[] = [
               Headers.APPLICATION_JSON,
-              { "Content-Length": JSON.stringify(payload).length.toString() }
+              { "Content-Length": JSON.stringify(payload).length.toString() },
+              {[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"}
             ];
 
             await ZosmfRestClient.putExpectString(session, endpoint, headers, payload);

@@ -15,6 +15,7 @@ import { posix } from "path";
 import * as util from "util";
 
 import { IHeaderContent, ZosmfRestClient } from "../../../../../rest";
+import { ZosmfHeaders } from "../../../../../rest/src/ZosmfHeaders";
 import { getErrorContext } from "../../../../../utils";
 import { ZosFilesConstants } from "../../constants/ZosFiles.constants";
 import { ZosFilesMessages } from "../../constants/ZosFiles.messages";
@@ -79,9 +80,8 @@ export class Invoke {
             // The request headers
             const reqHeaders: IHeaderContent[] = [
                 Headers.APPLICATION_JSON,
-                {
-                    [Headers.CONTENT_LENGTH]: JSON.stringify(reqPayload).length.toString()
-                }
+                {[Headers.CONTENT_LENGTH]: JSON.stringify(reqPayload).length.toString()},
+                {[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: "600"}
             ];
 
             const response = await ZosmfRestClient.putExpectJSON(session, endpoint, reqHeaders, reqPayload);
