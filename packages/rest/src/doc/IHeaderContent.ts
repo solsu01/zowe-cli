@@ -15,5 +15,5 @@
  * @interface IHeaderContent
  */
 export interface IHeaderContent {
-    [key: string]: string|number;
+    [key: string]: string;
 }

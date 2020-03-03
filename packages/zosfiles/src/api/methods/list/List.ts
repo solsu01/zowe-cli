@@ -59,7 +59,7 @@ export class List {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
 
-            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600});
+            reqHeaders.push(ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT);
 
             this.log.debug(`Endpoint: ${endpoint}`);
 
@@ -110,7 +110,7 @@ export class List {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
 
-            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600});
+            reqHeaders.push(ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT);
 
             // Migrated recall options
             if (options.recall) {
@@ -169,7 +169,7 @@ export class List {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
 
-            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600});
+            reqHeaders.push(ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT);
 
             this.log.debug(`Endpoint: ${endpoint}`);
 
@@ -215,7 +215,7 @@ export class List {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
 
-            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600});
+            reqHeaders.push(ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT);
 
             this.log.debug(`Endpoint: ${endpoint}`);
 
@@ -259,7 +259,7 @@ export class List {
                 reqHeaders.push(ZosmfHeaders.X_IBM_MAX_ITEMS);
             }
 
-            reqHeaders.push({[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600});
+            reqHeaders.push(ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT);
 
             this.log.debug(`Endpoint: ${endpoint}`);
 

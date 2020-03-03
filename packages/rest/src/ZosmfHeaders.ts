@@ -187,5 +187,5 @@ export class ZosmfHeaders {
      * @static
      * @memberof ZosmfHeaders
      */
-    public static readonly X_IBM_RESPONSE_TIMEOUT = "X-IBM-Response-Timeout";
+    public static readonly X_IBM_RESPONSE_TIMEOUT: IHeaderContent = {"X-IBM-Response-Timeout": "600"};
 }

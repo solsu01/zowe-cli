@@ -57,7 +57,7 @@ export class HMigrate {
             const headers: IHeaderContent[] = [
               Headers.APPLICATION_JSON,
               { "Content-Length": JSON.stringify(payload).length.toString() },
-              {[ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600}
+              ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT
             ];
 
             await ZosmfRestClient.putExpectString(session, endpoint, headers, payload);

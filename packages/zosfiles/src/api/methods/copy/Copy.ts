@@ -68,7 +68,7 @@ export class Copy {
         const reqHeaders: IHeaderContent[] = [
             Headers.APPLICATION_JSON,
             { [Headers.CONTENT_LENGTH]: JSON.stringify(payload).length.toString() },
-            { [ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT]: 600 }
+            ZosmfHeaders.X_IBM_RESPONSE_TIMEOUT
         ];
 
         try {
